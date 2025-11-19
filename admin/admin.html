@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — WAECCARDS</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script>window.BACKEND = "https://waecghcardsonline-backend.onrender.com";</script>
+</head>
+<body>
+  <div id="app">
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="panel center">
+      <h1>Admin Login</h1>
+      <form id="loginForm" class="form">
+        <input id="username" placeholder="username" value="admin" />
+        <input id="password" placeholder="password" type="password" />
+        <button type="submit" class="btn primary">Log in</button>
+      </form>
+      <div class="muted">Use the ADMIN_USERNAME / ADMIN_PASSWORD you set on Render</div>
+      <div id="loginMsg" class="muted error"></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
+      <header class="topbar">
+        <div class="brand">waecghcardsonline — Admin</div>
+        <div class="actions">
+          <button id="btnLogout" class="btn">Logout</button>
+        </div>
+      </header>
+
+      <main class="main grid">
+        <section class="card">
+          <h2>Quick Stats</h2>
+          <div class="stats">
+            <div class="stat"><div id="statTotal">—</div><div class="label">Total</div></div>
+            <div class="stat"><div id="statUnused">—</div><div class="label">Unused</div></div>
+            <div class="stat"><div id="statUsed">—</div><div class="label">Used</div></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Add Voucher</h2>
+          <form id="addForm" class="form-inline">
+            <input id="serial" placeholder="Serial" />
+            <input id="pin" placeholder="PIN" />
+            <button type="submit" class="btn primary">Add</button>
+          </form>
+          <div id="addMsg" class="muted"></div>
+        </section>
+
+        <section class="card">
+          <h2>Bulk Upload (CSV)</h2>
+          <form id="bulkForm" class="form-inline" enctype="multipart/form-data">
+            <input id="csvfile" type="file" accept=".csv" />
+            <button type="submit" class="btn">Upload</button>
+          </form>
+          <div id="bulkMsg" class="muted"></div>
+        </section>
+
+        <section class="card full">
+          <h2>Vouchers</h2>
+          <div class="controls">
+            <input id="search" placeholder="Search serial or pin" />
+            <select id="filter">
+              <option value="all">All</option>
+              <option value="unused">Unused</option>
+              <option value="used">Used</option>
+            </select>
+            <button id="refresh" class="btn">Refresh</button>
+          </div>
+          <div id="voucherTable" class="tableWrap"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/admin/admin.js" defer></script>
+</body>
+</html>
