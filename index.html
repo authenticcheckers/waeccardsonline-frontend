@@ -3,87 +3,137 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>waeccardsonline — Instant WASSCE Vouchers</title>
+<title>waeccardsonline — Instant WASSCE Voucher Delivery</title>
+<meta name="description" content="Buy authentic WASSCE checker vouchers. Instant SMS delivery."/>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <style>
-.gold{color:#d4af37}
-.glass{backdrop-filter:blur(8px);background:rgba(255,255,255,0.03)}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+:root{ --navy:#07132b; --gold:#d4af37; --gold-dark:#b78f2b; }
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial; margin:0; background:radial-gradient(ellipse at top left,var(--navy),#020617); color:#fff;}
+.glass{backdrop-filter:blur(8px) saturate(120%); background-color:rgba(255,255,255,0.02);}
+.btn{background:var(--gold); color:var(--navy); font-weight:700; padding:.75rem 1.25rem; border-radius:.75rem;}
+.muted{color:rgba(255,255,255,0.75)}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:1.25rem; border-radius:12px;}
+a{color:var(--gold); text-decoration:none}
+.input{width:100%;padding:.75rem;border-radius:.5rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.03);color:#fff}
+.small{font-size:.9rem;color:rgba(255,255,255,0.7)}
 </style>
 </head>
-<body class="bg-[#07132b] text-white min-h-screen">
-<nav class="p-6 flex justify-between max-w-6xl mx-auto">
-  <div class="flex items-center gap-3"><div class="w-12 h-12 rounded bg-[#d4af37] text-[#07132b] flex items-center justify-center font-bold">W</div><div>waeccardsonline</div></div>
-  <div class="flex gap-4 items-center"><a href="#how" class="text-white/80">How</a><a href="/admin/login.html" class="text-white/80">Admin</a></div>
+<body>
+<nav class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+  <a href="/" class="flex items-center gap-3" aria-label="Home">
+    <img src="/assets/logo.svg" alt="W" class="w-12 h-12 rounded-xl"/>
+    <div>
+      <div class="text-lg font-semibold tracking-tight">waecghcardsonline</div>
+      <div class="text-xs muted">Instant WASSCE voucher delivery</div>
+    </div>
+  </a>
+  <div class="flex items-center gap-6 text-sm">
+    <a href="#how" class="muted">How it works</a>
+    <a href="/admin/admin.html" class="muted">Admin</a>
+    <a href="#faq" class="muted">FAQ</a>
+    <a href="#support" class="btn">Buy Now</a>
+  </div>
 </nav>
 
-<section class="max-w-3xl mx-auto text-center py-20">
-  <h1 class="text-4xl font-bold mb-4">Buy WASSCE Checker Vouchers <span class="gold">Instantly</span></h1>
-  <p class="text-white/70 mb-8">Secure payments via Paystack. Receive your voucher by SMS.</p>
+<header class="max-w-6xl mx-auto px-6 text-center py-20">
+  <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Buy WASSCE Checker Vouchers <span style="color:var(--gold)">Instantly</span></h1>
+  <p class="muted max-w-2xl mx-auto mb-8">Fast, secure and reliable. Receive your WAEC result checker instantly via SMS after payment.</p>
+  <a href="#buy" class="btn">Buy Voucher Now</a>
+</header>
 
-  <div class="glass p-8 rounded-xl">
-    <form id="buyForm" class="space-y-4">
-      <input id="name" placeholder="Full name" class="w-full p-3 rounded bg-white/5" required/>
-      <input id="phone" placeholder="Phone (e.g. 0244...)" class="w-full p-3 rounded bg-white/5" required/>
-      <input id="email" placeholder="Email (optional)" class="w-full p-3 rounded bg-white/5"/>
-      <button class="w-full py-3 bg-[#d4af37] text-[#07132b] font-bold rounded">Pay GHS 25</button>
+<main class="max-w-4xl mx-auto px-6 pb-20">
+  <section id="buy" class="card glass mb-8" data-aos="fade-up" aria-labelledby="purchase-heading">
+    <h2 id="purchase-heading" class="text-2xl font-semibold mb-4">Purchase Voucher</h2>
+
+    <form id="buyForm" class="space-y-4" novalidate>
+      <div>
+        <label class="text-sm block mb-1">Full name</label>
+        <input id="name" name="name" class="input" required aria-required="true" />
+      </div>
+
+      <div>
+        <label class="text-sm block mb-1">Phone number</label>
+        <input id="phone" name="phone" class="input" pattern="\d+" required aria-required="true" />
+        <div class="small">Use a Ghanaian number (e.g. 0244123456)</div>
+      </div>
+
+      <div>
+        <label class="text-sm block mb-1">Email (compulsory)</label>
+        <input id="email" name="email" type="email" class="input" required aria-required="true" />
+      </div>
+
+      <div class="flex gap-3 items-center">
+        <button id="payBtn" class="btn" type="submit">Pay GHS 25</button>
+        <div class="muted self-center">or contact support at <a href="tel:0560340394">0560340394</a></div>
+      </div>
+      <div id="buyMsg" class="small" role="status" aria-live="polite"></div>
     </form>
-  </div>
-</section>
+  </section>
 
-<section id="how" class="max-w-4xl mx-auto p-6">
-  <h2 class="text-2xl font-bold mb-4">How it works</h2>
-  <ol class="list-decimal list-inside text-white/70">
-    <li>Enter your details and pay</li>
-    <li>We verify payment and reserve a voucher</li>
-    <li>Voucher is sent to your phone by SMS</li>
-  </ol>
-</section>
+  <section id="how" class="mb-8 card" aria-labelledby="how-heading">
+    <h3 id="how-heading" class="text-xl font-semibold mb-3">How it works</h3>
+    <ol class="muted list-decimal list-inside">
+      <li>Fill your details and pay with Paystack.</li>
+      <li>We verify payment and reserve an unused voucher.</li>
+      <li>Voucher is sent instantly to your phone via SMS.</li>
+    </ol>
+  </section>
 
-<section id="faq" class="max-w-4xl mx-auto p-6">
-  <h2 class="text-2xl font-bold mb-4">FAQ</h2>
-  <div class="text-white/70">If you don't receive SMS contact support: <a href="mailto:gyimahseth51@gmail.com" class="gold">gyimahseth51@gmail.com</a></div>
-</section>
+  <section id="faq" class="card mb-8" aria-labelledby="faq-heading">
+    <h3 id="faq-heading" class="text-xl font-semibold mb-3">Frequently asked questions</h3>
+    <div class="muted">
+      <strong>Delivery time:</strong> Instant after payment.<br/>
+      <strong>Didn't receive SMS?</strong> Use the admin resend tool or contact support.
+    </div>
+  </section>
 
-<footer class="text-center text-white/60 py-6">© 2025 waeccardsonline</footer>
+  <section id="support" class="card" aria-labelledby="support-heading">
+    <h3 id="support-heading" class="text-xl font-semibold mb-3">Support</h3>
+    <p class="muted">If you need help contact us:</p>
+    <p><strong>Phone:</strong> <a href="tel:0560340394">0560340394</a></p>
+    <p><strong>Email:</strong> <a href="mailto:gyimahseth51@gmail.com">gyimahseth51@gmail.com</a></p>
+  </section>
+</main>
 
+<footer class="text-center text-white/60 py-8">© 2025 waecghcardsonline — All rights reserved.</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
-const BACKEND = (location.hostname === 'localhost') ? 'http://localhost:3000' : window.location.origin;
+AOS.init({ duration: 700, once: true });
+const BACKEND = "https://waecghcardsonline-backend.onrender.com";
+const PAYSTACK_KEY = "REPLACE_WITH_PAYSTACK_PUBLIC_KEY";
+
+function showMsg(text, err=false){ const el=document.getElementById('buyMsg'); el.textContent=text; el.style.color = err? '#ff6b6b' : '#a3e635'; }
 
 document.getElementById('buyForm').addEventListener('submit', function(e){
   e.preventDefault();
-  const name=document.getElementById('name').value.trim();
-  const phone=document.getElementById('phone').value.trim();
-  const email=document.getElementById('email').value.trim();
-  if(!name||!phone){ alert('Name and phone required'); return; }
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+  if(!name || !phone || !email){ showMsg('Please fill name, phone and email (email is compulsory).', true); return; }
 
   const handler = PaystackPop.setup({
-    key: 'REPLACE_PAYSTACK_PUBLIC_KEY',
-    email: email || 'no-reply@waeccardsonline.online',
+    key: PAYSTACK_KEY,
+    email: email,
     amount: 2500,
     currency: 'GHS',
-    metadata: {
-      custom_fields: [
-        { display_name: 'phone', variable_name: 'phone', value: phone },
-        { display_name: 'email', variable_name: 'email', value: email }
-      ]
-    },
+    metadata: { custom_fields: [{ display_name: 'phone', variable_name: 'phone', value: phone }] },
     callback: function(response){
-      // verify payment with backend
-      fetch(BACKEND + '/verify-payment', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ reference: response.reference, name, phone, email })
-      }).then(r=>r.json()).then(data=>{
-        if(data.success){
-          // show voucher (simple)
-          alert('Payment OK. Voucher: ' + data.voucher);
-        } else {
-          alert('Payment verified but delivery failed: ' + (data.message || 'Contact support'));
-        }
-      }).catch(err=>{ alert('Server error'); });
+      showMsg('Verifying payment...');
+      fetch(BACKEND + '/verify-payment', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ reference: response.reference, name, phone, email }) })
+        .then(r=>r.json()).then(data=>{
+          if(data.success){
+            showMsg('Payment successful — voucher will be sent shortly.');
+            window.location.href = '/success.html?v=' + encodeURIComponent(data.voucher || (data.voucher_string || ''));
+          } else {
+            showMsg('Payment verified but delivery failed: ' + (data.message || 'Contact support'), true);
+          }
+        }).catch(()=>showMsg('Server error verifying payment', true));
     },
-    onClose: function(){ alert('Payment cancelled'); }
+    onClose: function(){ showMsg('Payment cancelled', true); }
   });
   handler.openIframe();
 });
