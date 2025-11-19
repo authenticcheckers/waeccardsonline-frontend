@@ -30,3 +30,69 @@ body{margin:0;background:linear-gradient(180deg,var(--bg),#000);color:#fff;min-h
 .actionBtn.success{background:#22c55e;color:#07132b}
 .actionBtn.info{background:#3b82f6;color:#fff}
 @media(max-width:900px){.main{grid-template-columns:1fr;padding:0 12px}.panel{width:92%}}
+/* --------------------------- */
+/* MOBILE OPTIMIZATION FIXES   */
+/* --------------------------- */
+
+@media (max-width: 768px) {
+
+  nav {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  nav .flex.items-center.gap-6 {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.2rem;
+  }
+
+  header {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    line-height: 1.25;
+  }
+
+  header p {
+    font-size: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  /* Fix form layout */
+  #buyForm .flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #payBtn {
+    width: 100%;
+    text-align: center;
+  }
+
+  #buyForm .muted {
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  /* Card spacing improved */
+  .card {
+    padding: 1rem;
+  }
+
+}
+
+/* Very small phones (iPhone SE, some Tecno/Itel devices) */
+@media (max-width: 420px) {
+  header h1 {
+    font-size: 1.65rem;
+  }
+  nav img {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
