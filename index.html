@@ -58,24 +58,36 @@ document.getElementById("buyForm").addEventListener("submit", function(e){
             })
             .then(r => r.json())
             .then(data => {
-                if (!data.success){
-                    showMsg("Verification failed: " + data.message, true);
-                    return;
-                }
+    if (data.success) {
+        showMsg('Payment successful — voucher will be sent shortly.');
 
-                // Voucher arrives as "SERIAL | PIN"
-                const voucher = data.voucher || "";
-                const [serial, pin] = voucher.split("|").map(x => x.trim());
+        // Extract serial and pin safely
+        let serial = "";
+        let pin = "";
 
-                if (!serial || !pin){
-                    showMsg("Voucher format invalid. Contact support.", true);
-                    return;
-                }
+        if (data.serial && data.pin) {
+            serial = data.serial;
+            pin = data.pin;
+        } else if (data.voucher || data.voucher_string) {
+            const text = (data.voucher || data.voucher_string).trim();
+            const parts = text.split("|");
 
-                // Redirect to success page
-                window.location.href =
-                    `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
-            })
+            serial = parts[0]?.trim() || "";
+            pin = parts[1]?.trim() || "";
+        }
+
+        // Redirect to success page
+        window.location.href =
+            `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
+    } 
+    else {
+        showMsg(
+            'Payment verified but delivery failed: ' + (data.message || 'Contact support'), 
+            true
+        );
+    }
+})
+
             .catch(() => showMsg("Server error verifying payment.", true));
         },
 
