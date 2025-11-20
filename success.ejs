@@ -50,6 +50,7 @@
             font-size: 18px;
             font-weight: bold;
             letter-spacing: 1px;
+            word-break: break-all;
         }
 
         button {
@@ -89,6 +90,7 @@
 
     </style>
 
+    <!-- jsPDF for PDF Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
@@ -101,13 +103,11 @@
         Your WASSCE result checker voucher has been generated.
     </div>
 
-    <!-- Voucher Display -->
-    <div class="voucher-box" id="voucherCode">
+    <div class="voucher-box" id="voucherBox">
         <%= voucher %>
     </div>
 
     <button class="copy-btn" onclick="copyVoucher()">Copy Voucher</button>
-
     <button class="pdf-btn" onclick="downloadPDF()">Download as PDF</button>
 
     <div class="footer">
@@ -117,27 +117,32 @@
 
 <script>
     function copyVoucher() {
-        const code = document.getElementById("voucherCode").innerText;
-        navigator.clipboard.writeText(code);
-        alert("Voucher copied!");
+        const code = document.getElementById("voucherBox").innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            alert("Voucher copied!");
+        });
     }
 
-    async function downloadPDF() {
+    function downloadPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        const voucherCode = document.getElementById("voucherCode").innerText;
+        const voucher = document.getElementById("voucherBox").innerText;
 
-        doc.setFontSize(16);
-        doc.text("Authentic Checkers - WASSCE Result Checker", 10, 20);
+        doc.setFontSize(18);
+        doc.text("Authentic Checkers", 10, 20);
+
+        doc.setFontSize(14);
+        doc.text("WASSCE Results Checker Voucher", 10, 35);
+
         doc.setFontSize(12);
-        doc.text("Your Voucher Code:", 10, 40);
+        doc.text("Voucher Code:", 10, 55);
 
         doc.setFontSize(20);
-        doc.text(voucherCode, 10, 55);
+        doc.text(voucher, 10, 70);
 
         doc.setFontSize(10);
-        doc.text("Thank you for your purchase!", 10, 80);
+        doc.text("Thank you for your purchase!", 10, 95);
 
         doc.save("WASSCE_Voucher.pdf");
     }
