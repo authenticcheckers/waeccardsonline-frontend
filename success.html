@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Your WAEC Voucher | waecghcardsonline</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+    background: radial-gradient(ellipse at top left, #07132b, #020617);
+    color: #fff;
+    font-family: Inter, system-ui, sans-serif;
+}
+.card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 2rem;
+    backdrop-filter: blur(6px);
+}
+.btn {
+    background: #d4af37;
+    color: #07132b;
+    padding: .75rem 1.25rem;
+    border-radius: .75rem;
+    font-weight: 700;
+}
+.label {
+    color: #a3e635;
+    font-size: .9rem;
+}
+.value {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+</style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-6">
+
+<div class="max-w-xl mx-auto card text-center">
+
+    <h1 class="text-3xl font-bold mb-4">Your WAEC Voucher</h1>
+    <p class="text-white/70 mb-6">Payment verified successfully. Below is your voucher.</p>
+
+    <div class="text-left space-y-6">
+
+        <div>
+            <div class="label">SERIAL NUMBER</div>
+            <div id="serial" class="value"></div>
+        </div>
+
+        <div>
+            <div class="label">PIN</div>
+            <div id="pin" class="value"></div>
+        </div>
+
+    </div>
+
+    <button id="downloadBtn" class="btn mt-8 w-full">Download as PDF</button>
+
+    <p class="mt-6 text-white/50 text-sm">
+        If you have issues, contact support: <br>
+        <a class="text-yellow-400" href="tel:0560340394">0560340394</a>
+    </p>
+
+</div>
+
+<script>
+// ------------------------------------------------------------
+// READ SERIAL & PIN FROM URL
+// ------------------------------------------------------------
+const params = new URLSearchParams(window.location.search);
+const serial = params.get("serial") || "N/A";
+const pin    = params.get("pin") || "N/A";
+
+document.getElementById("serial").textContent = serial;
+document.getElementById("pin").textContent = pin;
+
+// ------------------------------------------------------------
+// PDF DOWNLOAD GENERATOR
+// ------------------------------------------------------------
+document.getElementById("downloadBtn").addEventListener("click", () => {
+
+    const pdfContent = `
+        WAEC RESULTS CHECKER VOUCHER\n
+        Serial: ${serial}\n
+        PIN: ${pin}\n
+        \n
+        Provided by: waecghcardsonline
+        Support: 0560340394
+    `;
+
+    // Create a Blob and trigger download
+    const blob = new Blob([pdfContent], { type: "text/plain" });
+    const url  = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `WAEC-Voucher-${serial}.txt`; // Text file (safe & universal)
+    a.click();
+
+    URL.revokeObjectURL(url);
+});
+</script>
+
+</body>
+</html>
