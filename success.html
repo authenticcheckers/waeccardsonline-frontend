@@ -1,1 +1,147 @@
-<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Payment Success</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-[#07132b] text-white min-h-screen flex items-center justify-center"><div class="max-w-md w-full p-8 bg-[rgba(255,255,255,0.03)] rounded-lg"><h1 class="text-2xl font-bold text-[#d4af37] mb-4">Payment Confirmed</h1><p class="text-white/70 mb-4">Your voucher has been sent by SMS.</p><div class="bg-white/5 p-4 rounded-lg mb-4"><div class="text-sm text-white/60">Voucher</div><div id="voucher" class="text-lg font-bold mt-2">XXXX-XXXX</div></div><a href="/" class="inline-block px-6 py-3 bg-[#d4af37] text-[#07132b] rounded-lg font-semibold">Back to site</a></div><script>const p=new URLSearchParams(location.search);const v=p.get('v');if(v)document.getElementById('voucher').innerText=v;</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Retrieved Successfully</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            width: 95%;
+            max-width: 480px;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        .success-box {
+            background: #eafce8;
+            border-left: 5px solid #29a329;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #1b5e20;
+        }
+
+        .voucher-box {
+            background: #fafafa;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #0066d1;
+        }
+
+        .pdf-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        .pdf-btn:hover {
+            background: #e68900;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #555;
+        }
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Payment Successful 🎉</h2>
+
+    <div class="success-box">
+        Your WASSCE result checker voucher has been generated.
+    </div>
+
+    <!-- Voucher Display -->
+    <div class="voucher-box" id="voucherCode">
+        <%= voucher %>
+    </div>
+
+    <button class="copy-btn" onclick="copyVoucher()">Copy Voucher</button>
+
+    <button class="pdf-btn" onclick="downloadPDF()">Download as PDF</button>
+
+    <div class="footer">
+        Thank you for using <strong>Authentic Checkers</strong>.
+    </div>
+</div>
+
+<script>
+    function copyVoucher() {
+        const code = document.getElementById("voucherCode").innerText;
+        navigator.clipboard.writeText(code);
+        alert("Voucher copied!");
+    }
+
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const voucherCode = document.getElementById("voucherCode").innerText;
+
+        doc.setFontSize(16);
+        doc.text("Authentic Checkers - WASSCE Result Checker", 10, 20);
+        doc.setFontSize(12);
+        doc.text("Your Voucher Code:", 10, 40);
+
+        doc.setFontSize(20);
+        doc.text(voucherCode, 10, 55);
+
+        doc.setFontSize(10);
+        doc.text("Thank you for your purchase!", 10, 80);
+
+        doc.save("WASSCE_Voucher.pdf");
+    }
+</script>
+
+</body>
+</html>
