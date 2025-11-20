@@ -6,6 +6,87 @@
 <title>waeccardsonline — Instant WASSCE Voucher Delivery</title>
 <meta name="description" content="Buy authentic WASSCE checker vouchers. Instant SMS delivery."/>
 <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+AOS.init({ duration: 700, once: true });
+
+const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com";
+const PAYSTACK_PUBLIC_KEY = "pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
+
+// Show message (green or red)
+function showMsg(text, isError = false){
+    const el = document.getElementById("buyMsg");
+    el.textContent = text;
+    el.style.color = isError ? "#ff6b6b" : "#a3e635";
+}
+
+// --------------------------------------
+// PAYMENT HANDLER
+// --------------------------------------
+document.getElementById("buyForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const name  = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    if (!name || !phone || !email){
+        showMsg("Please fill name, phone and email.", true);
+        return;
+    }
+
+    let handler = PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY,
+        email: email,
+        amount: 25 * 100, // GHS 25
+        currency: "GHS",
+        metadata: { name, phone, email },
+
+        callback: function(response){
+            showMsg("Verifying payment...");
+
+            fetch(BACKEND_URL + "/verify-payment", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    reference: response.reference,
+                    name,
+                    phone,
+                    email
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success){
+                    showMsg("Verification failed: " + data.message, true);
+                    return;
+                }
+
+                // Voucher arrives as "SERIAL | PIN"
+                const voucher = data.voucher || "";
+                const [serial, pin] = voucher.split("|").map(x => x.trim());
+
+                if (!serial || !pin){
+                    showMsg("Voucher format invalid. Contact support.", true);
+                    return;
+                }
+
+                // Redirect to success page
+                window.location.href =
+                    `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
+            })
+            .catch(() => showMsg("Server error verifying payment.", true));
+        },
+
+        onClose: function(){
+            showMsg("Payment window closed.", true);
+        }
+    });
+
+    handler.openIframe();
+});
+</script>
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
