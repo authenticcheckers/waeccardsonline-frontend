@@ -1,8 +1,8 @@
 // -----------------------------
 // CONFIGURATION
 // -----------------------------
-const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com"; // <-- change this
-const PAYSTACK_PUBLIC_KEY = "pk_test_bee2ecea00aef3aa6df3aa70d6accfe16e94e167";      // <-- change this
+const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com"; 
+const PAYSTACK_PUBLIC_KEY = "pk_test_bee2ecea00aef3aa6df3aa70d6accfe16e94e167";
 
 // -----------------------------
 // TRIGGER PAYMENT
@@ -11,6 +11,7 @@ function startPayment() {
     const name = document.getElementById("name").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const email = document.getElementById("email").value.trim();
+    const type = document.getElementById("voucherType").value; // WASSCE or BECE
 
     if (!phone || !email) {
         alert("Please enter your phone and email.");
@@ -20,16 +21,19 @@ function startPayment() {
     let handler = PaystackPop.setup({
         key: PAYSTACK_PUBLIC_KEY,
         email: email,
-        amount: 2500 * 100, // GHS 25.00
+        amount: 25 * 100, // GHS 25.00
         currency: "GHS",
+
         metadata: {
-            name: name,
-            phone: phone,
-            email: email,
+            custom_fields: [
+                { display_name: "name", variable_name: "name", value: name },
+                { display_name: "phone", variable_name: "phone", value: phone },
+                { display_name: "voucher_type", variable_name: "voucher_type", value: type }
+            ]
         },
 
         callback: function (response) {
-            verifyPayment(response.reference, name, phone, email);
+            verifyPayment(response.reference, name, phone, email, type);
         },
 
         onClose: function () {
@@ -43,20 +47,18 @@ function startPayment() {
 // -----------------------------
 // VERIFY PAYMENT WITH BACKEND
 // -----------------------------
-function verifyPayment(reference, name, phone, email) {
+function verifyPayment(reference, name, phone, email, type) {
     fetch(`${BACKEND_URL}/verify-payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-      const type = document.getElementById("voucherType").value;
 
-body: JSON.stringify({
-    reference: response.reference,
-    name,
-    phone,
-    email,
-    type
-})
-
+        body: JSON.stringify({
+            reference: reference,
+            name,
+            phone,
+            email,
+            type
+        })
     })
         .then(res => res.json())
         .then(data => {
@@ -78,3 +80,4 @@ body: JSON.stringify({
             alert("Error verifying payment. Please contact support.");
         });
 }
+
