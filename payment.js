@@ -1,29 +1,27 @@
 // -----------------------------
 // CONFIGURATION
 // -----------------------------
-const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com";
+const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com"; 
 const PAYSTACK_PUBLIC_KEY = "pk_test_bee2ecea00aef3aa6df3aa70d6accfe16e94e167";
 
 // -----------------------------
-// TRIGGER PAYMENT
+// START PAYMENT
 // -----------------------------
 function startPayment() {
     const name = document.getElementById("name").value.trim();
     const phone = document.getElementById("phone").value.trim();
-    const type = document.getElementById("voucherType").value; // WASSCE or BECE
+    const email = document.getElementById("email").value.trim();
+    const type = document.getElementById("voucherType").value;
 
-    if (!phone) {
-        alert("Please enter your phone number.");
+    if (!phone || !email) {
+        alert("Please enter your phone and email.");
         return;
     }
-
-    // Auto-generate email for Paystack requirement
-    const email = `${phone}@autovoucher.com`;
 
     let handler = PaystackPop.setup({
         key: PAYSTACK_PUBLIC_KEY,
         email: email,
-        amount: 25 * 100, // GHS 25.00
+        amount: 25 * 100,
         currency: "GHS",
 
         metadata: {
@@ -47,38 +45,27 @@ function startPayment() {
 }
 
 // -----------------------------
-// VERIFY PAYMENT WITH BACKEND
+// VERIFY PAYMENT
 // -----------------------------
 function verifyPayment(reference, name, phone, email, type) {
     fetch(`${BACKEND_URL}/verify-payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference, name, phone, email, type })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                alert("Verification failed: " + data.message);
+                return;
+            }
 
-        body: JSON.stringify({
-            reference: reference,
-            name,
-            phone,
-            email,
-            type
+            const [serial, pin] = data.voucher.split("|").map(x => x.trim());
+
+            window.location.href = `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
         })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (!data.success) {
-            alert("Verification failed: " + data.message);
-            return;
-        }
-
-        // Extract serial and pin
-        const voucherText = data.voucher; // "serial | pin"
-        const [serial, pin] = voucherText.split("|").map(x => x.trim());
-
-        // Redirect to success page
-        window.location.href =
-            `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
-    })
-    .catch((err) => {
-        console.error("Verification error:", err);
-        alert("Error verifying payment. Please contact support.");
-    });
+        .catch(err => {
+            console.error("Verification error:", err);
+            alert("Error verifying payment. Please contact support.");
+        });
 }
