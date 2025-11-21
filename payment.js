@@ -1,8 +1,8 @@
 // -----------------------------
 // CONFIGURATION
 // -----------------------------
-const BACKEND_URL = "https://YOUR-BACKEND-URL.onrender.com"; // <-- change this
-const PAYSTACK_PUBLIC_KEY = "YOUR-PAYSTACK-PUBLIC-KEY";      // <-- change this
+const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com"; // <-- change this
+const PAYSTACK_PUBLIC_KEY = "pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";      // <-- change this
 
 // -----------------------------
 // TRIGGER PAYMENT
