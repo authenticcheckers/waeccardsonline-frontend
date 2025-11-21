@@ -47,12 +47,16 @@ function verifyPayment(reference, name, phone, email) {
     fetch(`${BACKEND_URL}/verify-payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            reference: reference,
-            name: name,
-            phone: phone,
-            email: email
-        })
+      const type = document.getElementById("voucherType").value;
+
+body: JSON.stringify({
+    reference: response.reference,
+    name,
+    phone,
+    email,
+    type
+})
+
     })
         .then(res => res.json())
         .then(data => {
