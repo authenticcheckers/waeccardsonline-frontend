@@ -1,183 +1,269 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>waeccardsonline — Instant WASSCE & BECE Voucher Delivery</title>
-<meta name="description" content="Buy authentic WASSCE and BECE checker vouchers. Instant SMS delivery."/>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="description" content="Buy authentic WASSCE and BECE checker vouchers. Instant SMS delivery." />
+
+<!-- Paystack v1 (required for PaystackPop.setup) -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+  /* ---------- Typography & Vars ---------- */
+  :root{
+    --bg1:#07132b;
+    --bg2:#020617;
+    --gold:#d4af37;
+    --muted:rgba(255,255,255,0.75);
+    --card-bg: rgba(255,255,255,0.02);
+    --glass: rgba(255,255,255,0.03);
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:radial-gradient(ellipse at top left,var(--bg1),var(--bg2));color:#fff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+  a{color:var(--gold);text-decoration:none}
+  img{display:block;max-width:100%}
 
-:root{ --navy:#07132b; --gold:#d4af37; --gold-dark:#b78f2b; }
-body{
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
-    margin:0;
-    background:radial-gradient(ellipse at top left,var(--navy),#020617);
-    color:#fff;
-}
-.glass{ backdrop-filter:blur(8px) saturate(120%); background-color:rgba(255,255,255,0.02);}
-.btn{ background:var(--gold); color:var(--navy); font-weight:700; padding:.75rem 1.25rem; border-radius:.75rem;}
-.muted{color:rgba(255,255,255,0.75)}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:1.25rem; border-radius:12px;}
-a{color:var(--gold); text-decoration:none}
-.input{width:100%;padding:.75rem;border-radius:.5rem;background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.03);color:#fff}
-.small{font-size:.9rem;color:rgba(255,255,255,0.7)}
+  /* ---------- Layout ---------- */
+  .container{max-width:1100px;margin:0 auto;padding:28px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b78f2b);display:flex;align-items:center;justify-content:center;color:var(--bg1);font-weight:800}
+  nav a{margin-left:18px;color:var(--muted);font-weight:600;font-size:14px}
 
-/* Mobile Fixes */
-@media (max-width:768px){
-  nav{flex-direction:column; gap:1rem; text-align:center;}
-  nav .flex.items-center.gap-6{flex-wrap:wrap; justify-content:center; gap:1.2rem;}
-  header{padding-top:4rem; padding-bottom:4rem;}
-  header h1{font-size:2rem; line-height:1.25;}
-}
+  /* ---------- Hero ---------- */
+  .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;padding:36px 0}
+  .hero-left h1{font-size:44px;line-height:1.02;margin:0 0 12px}
+  .hero-left p{color:var(--muted);margin:0 0 24px}
+  .cta-row{display:flex;gap:14px;align-items:center}
+
+  /* ---------- Cards & Form ---------- */
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(0,0,0,0.35)}
+  .form .row{margin-bottom:12px}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input.input, select.input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:#fff;outline:none}
+  .muted{color:var(--muted)}
+
+  /* ---------- Button ---------- */
+  .btn{
+    background:var(--gold);color:var(--bg1);padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;
+    box-shadow:0 6px 18px rgba(215,175,70,0.18);transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(215,175,70,0.22)}
+  .btn:active{transform:translateY(-1px) scale(0.995)}
+
+  /* ---------- Animations (page load & scroll) ---------- */
+  .page-fade{opacity:0;transform:translateY(18px);animation:pageIn .6s cubic-bezier(.2,.9,.2,1) forwards}
+  @keyframes pageIn{to{opacity:1;transform:none}}
+
+  .scroll-anim{opacity:0;transform:translateY(30px);transition:opacity .7s ease, transform .7s ease}
+  .scroll-anim.is-visible{opacity:1;transform:none}
+
+  .card-pop{transform-origin:center;opacity:0;transform:scale(.94) translateY(6px);transition:transform .45s cubic-bezier(.2,.9,.2,1), opacity .45s}
+  .card-pop.is-visible{opacity:1;transform:none}
+
+  /* ---------- Button micro animations ---------- */
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;padding:10px 14px;border-radius:10px}
+  .btn-ghost:hover{transform:translateY(-3px)}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:960px){
+    .hero{grid-template-columns:1fr; padding-bottom:8px}
+    .hero-right{order:-1}
+  }
+  @media (max-width:520px){
+    .container{padding:16px}
+    .hero-left h1{font-size:28px}
+  }
+
+  /* ---------- Small helpers ---------- */
+  .flex{display:flex;gap:12px;align-items:center}
+  .space-y{display:flex;flex-direction:column;gap:12px}
+  .center{display:flex;align-items:center;justify-content:center}
+  .hint{font-size:13px;color:var(--muted)}
+  footer{padding:28px 0;color:rgba(255,255,255,0.5);text-align:center}
 </style>
 </head>
+<body class="page-fade">
 
-<body>
-<nav class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-  <a href="/" class="flex items-center gap-3">
-    <img src="/assets/logo.svg" class="w-12 h-12 rounded-xl"/>
-    <div>
-      <div class="text-lg font-semibold">waecghcardsonline</div>
-      <div class="text-xs muted">Instant voucher delivery</div>
-    </div>
-  </a>
-  <div class="flex items-center gap-6 text-sm">
-    <a href="#how" class="muted">How it works</a>
-    <a href="/admin/admin.html" class="muted">Admin</a>
-    <a href="#faq" class="muted">FAQ</a>
-    <a href="#buy" class="btn">Buy Now</a>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">AC</div>
+        <div>
+          <div style="font-weight:800;font-size:16px">Authentic Checkers</div>
+          <div class="muted" style="font-size:13px">Instant voucher delivery</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#how">How it works</a>
+        <a href="/admin/admin.html">Admin</a>
+        <a href="#faq">FAQ</a>
+        <a href="#buy" class="btn-ghost">Buy Now</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <!-- LEFT: hero copy -->
+      <div class="hero-left scroll-anim">
+        <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--gold)">Instantly</span></h1>
+        <p class="muted">Secure, fast delivery. Receive your voucher instantly by SMS after payment.</p>
+
+        <div class="cta-row">
+          <button class="btn" onclick="document.getElementById('buyForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
+          <a class="btn-ghost" href="#how">How it works</a>
+        </div>
+
+        <div style="margin-top:18px" class="muted">
+          <strong>Price:</strong> GHS 25 per voucher · <strong>SMS delivery</strong>
+        </div>
+      </div>
+
+      <!-- RIGHT: purchase card -->
+      <div class="hero-right card card-pop">
+        <h3 style="margin:0 0 8px">Purchase Voucher</h3>
+        <div class="muted" style="font-size:13px;margin-bottom:12px">Enter your details — we send the voucher by SMS.</div>
+
+        <form id="buyForm" class="form space-y" onsubmit="startPaymentFromForm(event)">
+          <div class="row">
+            <label>Full Name</label>
+            <input id="name" class="input" autocomplete="name" required />
+          </div>
+
+          <div class="row">
+            <label>Phone number</label>
+            <input id="phone" class="input" placeholder="0244123456" pattern="[0-9]+" required />
+            <div class="hint">Use a Ghanaian number (e.g. 0244123456)</div>
+          </div>
+
+          <div class="row">
+            <label>Voucher type</label>
+            <select id="voucherType" class="input">
+              <option value="WASSCE">WASSCE (SHS)</option>
+              <option value="BECE">BECE (JHS)</option>
+            </select>
+          </div>
+
+          <div class="row center">
+            <button id="payBtn" class="btn" type="submit">Pay GHS 25</button>
+            <div style="margin-left:auto" class="muted">or call <a href="tel:0560340394">0560340394</a></div>
+          </div>
+
+          <div id="buyMsg" class="hint"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="card card-pop scroll-anim" style="margin-top:28px">
+      <h3>How it works</h3>
+      <ol style="margin:8px 0 0 18px;color:var(--muted)">
+        <li>Fill details and complete payment via Paystack.</li>
+        <li>We verify payment and reserve an unused voucher (BECE/WASSCE).</li>
+        <li>Voucher is sent instantly to your phone via SMS.</li>
+      </ol>
+    </section>
+
+    <!-- Features -->
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:18px">
+      <div class="card card-pop scroll-anim">
+        <h4 style="margin:0 0 8px">Instant Delivery</h4>
+        <div class="muted">Get your voucher immediately after payment via SMS.</div>
+      </div>
+      <div class="card card-pop scroll-anim">
+        <h4 style="margin:0 0 8px">Secure Payments</h4>
+        <div class="muted">Payments processed by Paystack (inline checkout).</div>
+      </div>
+      <div class="card card-pop scroll-anim">
+        <h4 style="margin:0 0 8px">Easy Admin</h4>
+        <div class="muted">Admin can upload vouchers, resend SMS, and review sales.</div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="card card-pop scroll-anim" style="margin-top:18px">
+      <h3>FAQ</h3>
+      <div class="muted">
+        <strong>Delivery Time:</strong> Instant after payment.<br>
+        <strong>Didn't receive SMS?</strong> Use the admin resend tool or contact support.
+      </div>
+    </section>
+
+    <footer>
+      © 2025 Authentic Checkers — All rights reserved.
+    </footer>
   </div>
-</nav>
-
-<header class="max-w-6xl mx-auto px-6 text-center py-20">
-  <h1 class="text-4xl md:text-6xl font-extrabold mb-4">
-    Buy WASSCE & BECE Vouchers <span style="color:var(--gold)">Instantly</span>
-  </h1>
-  <p class="muted max-w-2xl mx-auto mb-8">
-    Fast, secure and reliable. Receive your voucher instantly via SMS after payment.
-  </p>
-  <a href="#buy" class="btn">Buy Voucher Now</a>
-</header>
-
-<main class="max-w-4xl mx-auto px-6 pb-20">
-
-  <!-- BUY FORM -->
-  <section id="buy" class="card glass mb-8" data-aos="fade-up">
-    <h2 class="text-2xl font-semibold mb-4">Purchase Voucher</h2>
-
-    <form id="buyForm" class="space-y-4" novalidate>
-
-      <div>
-        <label class="text-sm block mb-1">Full Name</label>
-        <input id="name" class="input" required />
-      </div>
-
-      <div>
-        <label class="text-sm block mb-1">Phone Number</label>
-        <input id="phone" class="input" pattern="\d+" required />
-        <div class="small">e.g. 0244123456</div>
-      </div>
-
-      <div>
-        <label class="text-sm block mb-1">Voucher Type</label>
-        <select id="voucherType" class="input">
-          <option value="WASSCE">WASSCE (SHS)</option>
-          <option value="BECE">BECE (JHS)</option>
-        </select>
-      </div>
-
-      <div class="flex flex-col md:flex-row gap-3 items-center">
-        <button id="payBtn" class="btn w-full md:w-auto" type="submit">Pay GHS 25</button>
-      </div>
-
-      <div id="buyMsg" class="small"></div>
-    </form>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section id="how" class="card mb-8">
-    <h3 class="text-xl font-semibold mb-3">How it works</h3>
-    <ol class="muted list-decimal list-inside">
-      <li>Fill your details and pay with Paystack.</li>
-      <li>We verify the payment instantly.</li>
-      <li>Your unused voucher is sent instantly via SMS.</li>
-    </ol>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="card mb-8">
-    <h3 class="text-xl font-semibold mb-3">Frequently asked questions</h3>
-    <div class="muted">
-      <strong>Delivery time:</strong> Immediately after payment.<br/>
-      <strong>Didn't receive SMS?</strong> Contact support.
-    </div>
-  </section>
-
-  <!-- SUPPORT -->
-  <section id="support" class="card">
-    <h3 class="text-xl font-semibold mb-3">Support</h3>
-    <p class="muted">Need help? Contact us:</p>
-    <p><strong>Phone:</strong> <a href="tel:0560340394">0560340394</a></p>
-    <p><strong>Email:</strong> gyimahseth51@gmail.com</p>
-  </section>
-
-</main>
-
-<footer class="text-center text-white/60 py-8">
-  © 2025 waeccardsonline — All rights reserved.
-</footer>
 
 <script>
-AOS.init({ duration: 700, once: true });
+/* ============================
+   Configuration
+   ============================ */
+const BACKEND = "https://waecghcardsonline-backend.onrender.com";
+const PAYSTACK_PUBLIC_KEY = "pk_test_bee2ecea00aef3aa6df3aa70d6accfe16e94e167";
 
-const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com";
-const PAYSTACK_KEY = "pk_test_bee2ecea00aef3aa6df3aa70d6accfe16e94e167";
-
-function showMsg(text, error=false){
-  const div = document.getElementById("buyMsg");
-  div.textContent = text;
-  div.style.color = error ? "#ff6b6b" : "#a3e635";
+/* ============================
+   Utilities
+   ============================ */
+function showMsg(text, isError=false){
+  const el = document.getElementById('buyMsg');
+  el.textContent = text;
+  el.style.color = isError ? '#ff6b6b' : '#a3e635';
 }
 
-document.getElementById("buyForm").addEventListener("submit", function(e){
-  e.preventDefault();
+/* ============================
+   Animations: IntersectionObserver
+   ============================ */
+(function initScrollAnimations(){
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+      }
+    });
+  }, { threshold: 0.12 });
 
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const type = document.getElementById("voucherType").value;
+  document.querySelectorAll('.scroll-anim, .card-pop, .hero-left').forEach(el=>{
+    obs.observe(el);
+  });
+})();
+
+/* ============================
+   Payment flow
+   - Using Paystack v1 inline (PaystackPop.setup)
+   - Auto-generates email from phone to satisfy Paystack
+   ============================ */
+function startPaymentFromForm(e){
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const type = document.getElementById('voucherType').value;
 
   if(!name || !phone){
-    showMsg("Please enter your name and phone number.", true);
+    showMsg('Please enter name and phone.', true);
     return;
   }
 
-  // Auto-generated email
+  // auto email to satisfy Paystack requirement
   const email = `${phone}@autovoucher.com`;
 
-  let handler = PaystackPop.setup({
-    key: PAYSTACK_KEY,
-    email: email,
-    amount: 25 * 100,
-    currency: "GHS",
+  // Paystack expects amount in kobo/lowest currency unit (GHS*100)
+  const amount = 25 * 100;
+
+  const handler = PaystackPop.setup({
+    key: PAYSTACK_PUBLIC_KEY,
+    email,
+    amount,
+    currency: 'GHS',
     metadata: {
-      custom_fields: [
-        { display_name: "phone", variable_name: "phone", value: phone },
-        { display_name: "voucher_type", variable_name: "voucher_type", value: type }
+      custom_fields:[
+        { display_name: 'phone', variable_name: 'phone', value: phone },
+        { display_name: 'voucher_type', variable_name: 'voucher_type', value: type }
       ]
     },
-
     callback: function(response){
-      showMsg("Verifying payment...");
-
-      fetch(`${BACKEND_URL}/verify-payment`, {
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
+      showMsg('Verifying payment...');
+      fetch(`${BACKEND}/verify-payment`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
           reference: response.reference,
           name,
@@ -186,30 +272,30 @@ document.getElementById("buyForm").addEventListener("submit", function(e){
           type
         })
       })
-      .then(r => r.json())
-      .then(data => {
-        if(data.success){
-          showMsg("Payment successful — loading voucher...");
-
-          const serial = data.serial;
-          const pin = data.pin;
-
-          window.location.href =
-            `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
+      .then(r=>r.json())
+      .then(data=>{
+        if(data && data.success){
+          showMsg('Payment successful — redirecting...');
+          // prefer serial/pin fields if present otherwise voucher string
+          const serial = data.serial || (data.voucher && data.voucher.split('|')[0]?.trim()) || '';
+          const pin = data.pin || (data.voucher && data.voucher.split('|')[1]?.trim()) || '';
+          window.location.href = `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
         } else {
-          showMsg("Error: " + (data.message || "Voucher delivery failed"), true);
+          showMsg('Delivery failed: ' + (data.message || 'Contact support'), true);
         }
       })
-      .catch(() => showMsg("Server error. Try again.", true));
+      .catch(err=>{
+        console.error('verify error', err);
+        showMsg('Server error verifying payment. Try again or contact support.', true);
+      });
     },
-
     onClose: function(){
-      showMsg("Payment cancelled.", true);
+      showMsg('Payment cancelled', true);
     }
   });
 
   handler.openIframe();
-});
+}
 </script>
 </body>
 </html>
