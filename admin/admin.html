@@ -3,79 +3,108 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — WAECCARDS</title>
-  <link rel="stylesheet" href="/admin/admin.css">
-  <script>window.BACKEND = "https://waecghcardsonline-backend.onrender.com";</script>
+  <title>Authentic Checkers — Admin</title>
+  <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-  <div id="app">
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="panel center">
-      <h1>Admin Login</h1>
-      <form id="loginForm" class="form">
-        <input id="username" placeholder="username" value="admin" />
-        <input id="password" placeholder="password" type="password" />
-        <button type="submit" class="btn primary">Log in</button>
-      </form>
-      <div class="muted">Use the ADMIN_USERNAME / ADMIN_PASSWORD you set on Render</div>
-      <div id="loginMsg" class="muted error"></div>
+  <div id="root">
+
+    <!-- LOGIN -->
+    <div id="loginPanel" class="card center">
+      <h2>Admin Login</h2>
+      <input id="adminPassword" type="password" placeholder="Password" autocomplete="current-password" />
+      <label class="checkbox"><input id="remember" type="checkbox" /> Remember me</label>
+      <div class="actions">
+        <button id="loginBtn">Login</button>
+      </div>
+      <p id="loginMsg" class="muted"></p>
     </div>
 
     <!-- DASHBOARD -->
-    <div id="dashboard" class="hidden">
-      <header class="topbar">
-        <div class="brand">waecghcardsonline — Admin</div>
-        <div class="actions">
-          <button id="btnLogout" class="btn">Logout</button>
+    <div id="dash" class="hidden">
+      <header class="top">
+        <h1>Authentic Checkers — Admin</h1>
+        <div>
+          <button id="logoutBtn" class="danger">Logout</button>
         </div>
       </header>
 
-      <main class="main grid">
-        <section class="card">
-          <h2>Quick Stats</h2>
-          <div class="stats">
-            <div class="stat"><div id="statTotal">—</div><div class="label">Total</div></div>
-            <div class="stat"><div id="statUnused">—</div><div class="label">Unused</div></div>
-            <div class="stat"><div id="statUsed">—</div><div class="label">Used</div></div>
+      <main>
+        <section class="panel">
+          <h2>Quick actions</h2>
+          <div class="grid">
+            <div>
+              <h3>Upload CSV</h3>
+              <input id="csvFile" type="file" accept=".csv" />
+              <button id="uploadCsvBtn">Upload CSV</button>
+              <p id="uploadCsvMsg" class="muted"></p>
+            </div>
+
+            <div>
+              <h3>Manual voucher</h3>
+              <input id="mSerial" placeholder="Serial" />
+              <input id="mPin" placeholder="Pin" />
+              <select id="mType">
+                <option value="WASSCE">WASSCE</option>
+                <option value="BECE">BECE</option>
+              </select>
+              <button id="addVoucherBtn">Add Voucher</button>
+              <p id="addVoucherMsg" class="muted"></p>
+            </div>
+
+            <div>
+              <h3>Search / Filters</h3>
+              <input id="searchInput" placeholder="search serial, pin, phone, email" />
+              <select id="filterUsed">
+                <option value="all">All</option>
+                <option value="false">Unused</option>
+                <option value="true">Used</option>
+              </select>
+              <button id="applyFilterBtn">Apply</button>
+            </div>
           </div>
         </section>
 
-        <section class="card">
-          <h2>Add Voucher</h2>
-          <form id="addForm" class="form-inline">
-            <input id="serial" placeholder="Serial" />
-            <input id="pin" placeholder="PIN" />
-            <button type="submit" class="btn primary">Add</button>
-          </form>
-          <div id="addMsg" class="muted"></div>
-        </section>
-
-        <section class="card">
-          <h2>Bulk Upload (CSV)</h2>
-          <form id="bulkForm" class="form-inline" enctype="multipart/form-data">
-            <input id="csvfile" type="file" accept=".csv" />
-            <button type="submit" class="btn">Upload</button>
-          </form>
-          <div id="bulkMsg" class="muted"></div>
-        </section>
-
-        <section class="card full">
+        <section class="panel">
           <h2>Vouchers</h2>
-          <div class="controls">
-            <input id="search" placeholder="Search serial or pin" />
-            <select id="filter">
-              <option value="all">All</option>
-              <option value="unused">Unused</option>
-              <option value="used">Used</option>
-            </select>
-            <button id="refresh" class="btn">Refresh</button>
+          <div class="table-actions">
+            <button id="refreshVouchersBtn">Refresh</button>
+            <button id="exportVouchersBtn">Export CSV</button>
           </div>
-          <div id="voucherTable" class="tableWrap"></div>
+          <div class="table-wrap">
+            <table id="vouchersTable">
+              <thead><tr>
+                <th>ID</th><th>Serial</th><th>Pin</th><th>Type</th><th>Used</th><th>Reference</th><th>Actions</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div id="vouchersMsg" class="muted"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Sales</h2>
+          <div class="table-actions">
+            <button id="refreshSalesBtn">Refresh</button>
+            <button id="exportSalesBtn">Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table id="salesTable">
+              <thead><tr>
+                <th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Voucher</th><th>Reference</th><th>Date</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div id="salesMsg" class="muted"></div>
         </section>
       </main>
+
+      <footer class="footer muted">Logged in as <span id="adminUser">admin</span></footer>
     </div>
+
   </div>
 
-  <script src="/admin/admin.js" defer></script>
+  <script src="admin.js"></script>
 </body>
 </html>
