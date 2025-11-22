@@ -1,110 +1,99 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Authentic Checkers — Admin</title>
-  <link rel="stylesheet" href="admin.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
+    header { background: #111; color: white; padding: 15px; font-size: 20px; }
+    .container { padding: 20px; }
+    .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    button { padding: 10px 16px; border: none; background: black; color: white; border-radius: 6px; cursor: pointer; }
+    input { padding: 10px; width: 100%; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #eee; }
+  </style>
 </head>
 <body>
-  <div id="root">
-
-    <!-- LOGIN -->
-    <div id="loginPanel" class="card center">
+  <header>Authentic Checkers — Admin Dashboard</header>
+  <div class="container">
+    <div class="card" id="login-card">
       <h2>Admin Login</h2>
-      <input id="adminPassword" type="password" placeholder="Password" autocomplete="current-password" />
-      <label class="checkbox"><input id="remember" type="checkbox" /> Remember me</label>
-      <div class="actions">
-        <button id="loginBtn">Login</button>
-      </div>
-      <p id="loginMsg" class="muted"></p>
+      <input id="email" type="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <p id="login-status" style="color:red;"></p>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="dash" class="hidden">
-      <header class="top">
-        <h1>Authentic Checkers — Admin</h1>
-        <div>
-          <button id="logoutBtn" class="danger">Logout</button>
-        </div>
-      </header>
+    <div class="card" id="admin-panel" style="display:none;">
+      <h2>Dashboard</h2>
 
-      <main>
-        <section class="panel">
-          <h2>Quick actions</h2>
-          <div class="grid">
-            <div>
-              <h3>Upload CSV</h3>
-              <input id="csvFile" type="file" accept=".csv" />
-              <button id="uploadCsvBtn">Upload CSV</button>
-              <p id="uploadCsvMsg" class="muted"></p>
-            </div>
+      <button onclick="loadSales()">Load Voucher Sales</button>
+      <button onclick="loadAffiliates()">Load Affiliates</button>
+      <button onclick="logout()" style="background:#b00;">Logout</button>
 
-            <div>
-              <h3>Manual voucher</h3>
-              <input id="mSerial" placeholder="Serial" />
-              <input id="mPin" placeholder="Pin" />
-              <select id="mType">
-                <option value="WASSCE">WASSCE</option>
-                <option value="BECE">BECE</option>
-              </select>
-              <button id="addVoucherBtn">Add Voucher</button>
-              <p id="addVoucherMsg" class="muted"></p>
-            </div>
-
-            <div>
-              <h3>Search / Filters</h3>
-              <input id="searchInput" placeholder="search serial, pin, phone, email" />
-              <select id="filterUsed">
-                <option value="all">All</option>
-                <option value="false">Unused</option>
-                <option value="true">Used</option>
-              </select>
-              <button id="applyFilterBtn">Apply</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <h2>Vouchers</h2>
-          <div class="table-actions">
-            <button id="refreshVouchersBtn">Refresh</button>
-            <button id="exportVouchersBtn">Export CSV</button>
-          </div>
-          <div class="table-wrap">
-            <table id="vouchersTable">
-              <thead><tr>
-                <th>ID</th><th>Serial</th><th>Pin</th><th>Type</th><th>Used</th><th>Reference</th><th>Actions</th>
-              </tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div id="vouchersMsg" class="muted"></div>
-        </section>
-
-        <section class="panel">
-          <h2>Sales</h2>
-          <div class="table-actions">
-            <button id="refreshSalesBtn">Refresh</button>
-            <button id="exportSalesBtn">Export CSV</button>
-          </div>
-          <div class="table-wrap">
-            <table id="salesTable">
-              <thead><tr>
-                <th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Voucher</th><th>Reference</th><th>Date</th>
-              </tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div id="salesMsg" class="muted"></div>
-        </section>
-      </main>
-
-      <footer class="footer muted">Logged in as <span id="adminUser">admin</span></footer>
+      <div id="output"></div>
     </div>
-
   </div>
 
-  <script src="admin.js"></script>
+  <script>
+    const API = "https://waecghcardsonline-backend.onrender.com";
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      fetch(`${API}/admin/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.status) {
+          document.getElementById("login-status").innerText = data.message;
+          return;
+        }
+        localStorage.setItem("adminToken", data.token);
+        document.getElementById("login-card").style.display = "none";
+        document.getElementById("admin-panel").style.display = "block";
+      });
+    }
+
+    function loadSales() {
+      const token = localStorage.getItem("adminToken");
+      fetch(`${API}/admin/sales`, { headers: { Authorization: `Bearer ${token}` }})
+      .then(res => res.json())
+      .then(data => {
+        let html = `<h3>Voucher Sales</h3><table><tr><th>Name</th><th>Phone</th><th>Type</th><th>Reference</th><th>Date</th></tr>`;
+        data.rows.forEach(row => {
+          html += `<tr><td>${row.name}</td><td>${row.phone}</td><td>${row.type}</td><td>${row.reference}</td><td>${row.date}</td></tr>`;
+        });
+        html += `</table>`;
+        document.getElementById("output").innerHTML = html;
+      });
+    }
+
+    function loadAffiliates() {
+      const token = localStorage.getItem("adminToken");
+      fetch(`${API}/admin/affiliates`, { headers: { Authorization: `Bearer ${token}` }})
+      .then(res => res.json())
+      .then(data => {
+        let html = `<h3>Affiliates</h3><table><tr><th>Name</th><th>Phone</th><th>Code</th><th>Total Sales</th></tr>`;
+        data.rows.forEach(row => {
+          html += `<tr><td>${row.name}</td><td>${row.phone}</td><td>${row.code}</td><td>${row.totalSales}</td></tr>`;
+        });
+        html += `</table>`;
+        document.getElementById("output").innerHTML = html;
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem("adminToken");
+      location.reload();
+    }
+  </script>
 </body>
 </html>
