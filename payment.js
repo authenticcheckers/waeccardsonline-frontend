@@ -2,7 +2,7 @@
 // CONFIGURATION
 // -----------------------------
 const BACKEND_URL = "https://waecghcardsonline-backend.onrender.com"; 
-const PAYSTACK_PUBLIC_KEY = "pk_test_bee2ecea00aef3aa6df3aa70d6accfe16e94e167";
+const PAYSTACK_PUBLIC_KEY = "pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
 
 // -----------------------------
 // START PAYMENT
