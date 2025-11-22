@@ -1,11 +1,9 @@
-/* Admin dashboard client
-   - Uses API_BASE endpoints on your backend
-   - Expects JSON responses:
-     /admin/login -> { success: true, token?: "..." }
-     /admin/upload -> { success: true, message: "" }
-     /admin/vouchers -> { vouchers: [...] }
-     /admin/sales -> { sales: [...] }
-     /admin/mark-used -> { success: true } (optional)
+/* Admin dashboard client — fixed version
+   Works with:
+   - POST /admin/login  -> { success: true, token?: "..." } OR { success:false, message }
+   - POST /admin/upload -> { success: true, message: "" }
+   - GET  /admin/vouchers -> { success:true, data: [...] } OR { vouchers: [...] }
+   - GET  /admin/sales -> { success:true, data: [...] } OR { sales: [...] }
 */
 
 const API_BASE = "https://waecghcardsonline-backend.onrender.com";
@@ -16,7 +14,7 @@ const state = {
 
 function setAuthToken(token, remember){
   state.token = token || null;
-  if(remember){
+  if(remember && token){
     localStorage.setItem("admin_token", token);
     localStorage.setItem("admin_remember", "1");
   } else {
@@ -25,52 +23,60 @@ function setAuthToken(token, remember){
   }
 }
 
-// ---------------- LOGIN ----------------
-document.getElementById("loginBtn").addEventListener("click", doLogin);
-document.getElementById("logoutBtn").addEventListener("click", doLogout);
-document.getElementById("uploadCsvBtn").addEventListener("click", uploadCsvHandler);
-document.getElementById("addVoucherBtn").addEventListener("click", addVoucherHandler);
-document.getElementById("refreshVouchersBtn").addEventListener("click", loadVouchers);
-document.getElementById("refreshSalesBtn").addEventListener("click", loadSales);
-document.getElementById("applyFilterBtn").addEventListener("click", loadVouchers);
-document.getElementById("exportVouchersBtn").addEventListener("click", exportVouchersCsv);
-document.getElementById("exportSalesBtn").addEventListener("click", exportSalesCsv);
+// Attach listeners after DOM is ready
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("loginBtn").addEventListener("click", doLogin);
+  document.getElementById("logoutBtn").addEventListener("click", doLogout);
+  document.getElementById("uploadCsvBtn").addEventListener("click", uploadCsvHandler);
+  document.getElementById("addVoucherBtn").addEventListener("click", addVoucherHandler);
+  document.getElementById("refreshVouchersBtn").addEventListener("click", loadVouchers);
+  document.getElementById("refreshSalesBtn").addEventListener("click", loadSales);
+  document.getElementById("applyFilterBtn").addEventListener("click", loadVouchers);
+  document.getElementById("exportVouchersBtn").addEventListener("click", exportVouchersCsv);
+  document.getElementById("exportSalesBtn").addEventListener("click", exportSalesCsv);
 
-if(state.token){
-  showDashboard();
-} else {
-  showLogin();
-}
+  if(state.token){
+    showDashboard();
+    loadVouchers();
+    loadSales();
+  } else {
+    showLogin();
+  }
+});
 
+// ---------- LOGIN ----------
 async function doLogin(){
-  const pw = document.getElementById("adminPassword").value.trim();
+  const username = (document.getElementById("adminUsername").value || "").trim();
+  const pw = (document.getElementById("adminPassword").value || "").trim();
   const remember = document.getElementById("remember").checked;
-  if(!pw) return showLoginMsg("Enter password");
+  if(!username || !pw) return showLoginMsg("Enter username and password");
 
-  document.getElementById("loginMsg").innerText = "Logging in...";
+  showLoginMsg("Signing in...");
   try{
     const res = await fetch(API_BASE + "/admin/login", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ password: pw })
+      body: JSON.stringify({ username, password: pw })
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if(data && data.success){
       setAuthToken(data.token || "local", remember);
+      document.getElementById("adminUser").innerText = username;
       showDashboard();
       loadVouchers();
       loadSales();
-      document.getElementById("loginMsg").innerText = "";
+      showLoginMsg("");
     } else {
-      showLoginMsg(data.message || "Invalid password");
+      showLoginMsg((data && data.message) ? data.message : "Invalid credentials");
     }
   }catch(e){
-    showLoginMsg("Login error");
+    showLoginMsg("Login error — check console");
     console.error(e);
   }
 }
 
-function showLoginMsg(m){ document.getElementById("loginMsg").innerText = m; }
+function showLoginMsg(m){ document.getElementById("loginMsg").innerText = m || ""; }
 function showLogin(){ document.getElementById("loginPanel").classList.remove("hidden"); document.getElementById("dash").classList.add("hidden"); }
 function showDashboard(){ document.getElementById("loginPanel").classList.add("hidden"); document.getElementById("dash").classList.remove("hidden"); }
 
@@ -80,13 +86,12 @@ function doLogout(){
   location.reload();
 }
 
-// ---------------- FETCH HELPERS ----------------
+// ---------------- HELPERS ----------------
 function authHeaders(){
   const h = {"Content-Type":"application/json"};
   if(state.token) h["Authorization"] = "Bearer " + state.token;
   return h;
 }
-
 async function safeJson(res){
   try { return await res.json(); } catch(e){ return null; }
 }
@@ -101,7 +106,6 @@ async function uploadCsvHandler(){
   const rows = csvToObjects(text);
   if(rows.length === 0) return document.getElementById("uploadCsvMsg").innerText = "No rows found";
 
-  // Format: [{serial, pin, type}]
   const payload = rows.map(r => ({
     serial: (r.serial||r.Serial||"").trim(),
     pin: (r.pin||r.Pin||"").trim(),
@@ -109,7 +113,6 @@ async function uploadCsvHandler(){
   })).filter(r => r.serial && r.pin);
 
   document.getElementById("uploadCsvMsg").innerText = `Uploading ${payload.length} vouchers...`;
-
   try{
     const res = await fetch(API_BASE + "/admin/upload", {
       method: "POST",
@@ -117,14 +120,13 @@ async function uploadCsvHandler(){
       body: JSON.stringify({ vouchers: payload })
     });
     const data = await safeJson(res);
-    document.getElementById("uploadCsvMsg").innerText = data?.message || (data?.success ? "Upload complete" : "Upload failed");
-    loadVouchers();
+    document.getElementById("uploadCsvMsg").innerText = (data && data.message) ? data.message : (data && data.success ? "Upload complete" : "Upload failed");
+    await loadVouchers();
   }catch(e){
     document.getElementById("uploadCsvMsg").innerText = "Upload error";
     console.error(e);
   }
 }
-
 function csvToObjects(text){
   const lines = text.split(/\r?\n/).filter(l => l.trim());
   if(lines.length === 0) return [];
@@ -142,7 +144,7 @@ async function addVoucherHandler(){
   const serial = document.getElementById("mSerial").value.trim();
   const pin = document.getElementById("mPin").value.trim();
   const type = document.getElementById("mType").value;
-  if(!serial || !pin) return document.getElementById("addVoucherMsg").innerText = "Serial and pin required";
+  if(!serial || !pin) { document.getElementById("addVoucherMsg").innerText = "Serial and pin required"; return; }
   document.getElementById("addVoucherMsg").innerText = "Adding...";
 
   try{
@@ -152,10 +154,10 @@ async function addVoucherHandler(){
       body: JSON.stringify({ vouchers: [{ serial, pin, type }] })
     });
     const data = await safeJson(res);
-    document.getElementById("addVoucherMsg").innerText = data?.message || (data?.success ? "Added" : "Failed");
+    document.getElementById("addVoucherMsg").innerText = (data && data.message) ? data.message : (data && data.success ? "Added" : "Failed");
     document.getElementById("mSerial").value = "";
     document.getElementById("mPin").value = "";
-    loadVouchers();
+    await loadVouchers();
   }catch(e){
     document.getElementById("addVoucherMsg").innerText = "Error";
     console.error(e);
@@ -169,7 +171,8 @@ async function loadVouchers(){
   try{
     const res = await fetch(API_BASE + "/admin/vouchers", { headers: authHeaders() });
     const data = await safeJson(res);
-    cachedVouchers = data?.vouchers || [];
+    // tolerate multiple response shapes
+    cachedVouchers = data?.vouchers || data?.data || [];
     renderVouchers();
     setTableMsg("vouchersMsg","");
   }catch(e){
@@ -211,7 +214,6 @@ function renderVouchers(){
 // ---------------- MARK USED ----------------
 async function markUsed(id, serial){
   if(!confirm("Mark voucher " + serial + " as used?")) return;
-  // If backend supports mark-used:
   try{
     const res = await fetch(API_BASE + "/admin/mark-used", {
       method: "POST",
@@ -226,7 +228,6 @@ async function markUsed(id, serial){
   }catch(e){
     console.warn("mark-used failed, falling back to refresh");
   }
-  // fallback: trigger refresh (server should already mark when sale recorded)
   await loadVouchers();
 }
 
@@ -237,7 +238,7 @@ async function loadSales(){
   try{
     const res = await fetch(API_BASE + "/admin/sales", { headers: authHeaders() });
     const data = await safeJson(res);
-    cachedSales = data?.sales || [];
+    cachedSales = data?.sales || data?.data || [];
     renderSales();
     setTableMsg("salesMsg","");
   }catch(e){
@@ -265,7 +266,7 @@ function renderSales(){
 // ---------------- EXPORT CSV ----------------
 function exportCsv(rows, headers){
   const lines = [headers.join(",")].concat(rows.map(r => headers.map(h=> `"${String(r[h]||"").replace(/"/g,'""')}"`).join(",")));
-  const blob = new Blob([lines.join("\\n")], {type:"text/csv"});
+  const blob = new Blob([lines.join("\n")], {type:"text/csv"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url; a.download = "export.csv"; document.body.appendChild(a); a.click(); a.remove();
@@ -278,16 +279,5 @@ function exportSalesCsv(){
 }
 
 // ---------------- UTIL ----------------
-function setTableMsg(id, txt){ document.getElementById(id).innerText = txt; }
+function setTableMsg(id, txt){ const el=document.getElementById(id); if(el) el.innerText = txt; }
 function escapeHtml(s){ return String(s||"").replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-// ---------------- INIT ----------------
-async function init(){
-  if(state.token){
-    showDashboard();
-    await Promise.all([loadVouchers(), loadSales()]);
-  } else {
-    showLogin();
-  }
-}
-init();
