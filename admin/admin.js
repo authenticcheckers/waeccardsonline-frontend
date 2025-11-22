@@ -1,129 +1,293 @@
-// admin/admin.js — admin client that works with Postgres backend
-(function(){
-  const API = window.BACKEND || location.origin;
-  const el = id => document.getElementById(id);
+/* Admin dashboard client
+   - Uses API_BASE endpoints on your backend
+   - Expects JSON responses:
+     /admin/login -> { success: true, token?: "..." }
+     /admin/upload -> { success: true, message: "" }
+     /admin/vouchers -> { vouchers: [...] }
+     /admin/sales -> { sales: [...] }
+     /admin/mark-used -> { success: true } (optional)
+*/
 
-  function setMsg(id, text){ const e=el(id); if(e) e.textContent=text; }
-  function token(){ return localStorage.getItem('admin_token'); }
-  function authHeaders(){ const t=token(); return t? {'Authorization':'Bearer '+t} : {}; }
+const API_BASE = "https://waecghcardsonline-backend.onrender.com";
+const state = {
+  token: localStorage.getItem("admin_token") || null,
+  pwRemember: localStorage.getItem("admin_remember") === "1"
+};
 
-  async function api(path, opts={}) {
-    opts.headers = Object.assign(opts.headers || {}, authHeaders());
-    if (opts.body && !(opts.body instanceof FormData)) {
-      opts.headers['Content-Type'] = 'application/json';
-      opts.body = JSON.stringify(opts.body);
+function setAuthToken(token, remember){
+  state.token = token || null;
+  if(remember){
+    localStorage.setItem("admin_token", token);
+    localStorage.setItem("admin_remember", "1");
+  } else {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_remember");
+  }
+}
+
+// ---------------- LOGIN ----------------
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+document.getElementById("logoutBtn").addEventListener("click", doLogout);
+document.getElementById("uploadCsvBtn").addEventListener("click", uploadCsvHandler);
+document.getElementById("addVoucherBtn").addEventListener("click", addVoucherHandler);
+document.getElementById("refreshVouchersBtn").addEventListener("click", loadVouchers);
+document.getElementById("refreshSalesBtn").addEventListener("click", loadSales);
+document.getElementById("applyFilterBtn").addEventListener("click", loadVouchers);
+document.getElementById("exportVouchersBtn").addEventListener("click", exportVouchersCsv);
+document.getElementById("exportSalesBtn").addEventListener("click", exportSalesCsv);
+
+if(state.token){
+  showDashboard();
+} else {
+  showLogin();
+}
+
+async function doLogin(){
+  const pw = document.getElementById("adminPassword").value.trim();
+  const remember = document.getElementById("remember").checked;
+  if(!pw) return showLoginMsg("Enter password");
+
+  document.getElementById("loginMsg").innerText = "Logging in...";
+  try{
+    const res = await fetch(API_BASE + "/admin/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ password: pw })
+    });
+    const data = await res.json();
+    if(data && data.success){
+      setAuthToken(data.token || "local", remember);
+      showDashboard();
+      loadVouchers();
+      loadSales();
+      document.getElementById("loginMsg").innerText = "";
+    } else {
+      showLoginMsg(data.message || "Invalid password");
     }
-    const res = await fetch(API + path, opts);
-    if (res.status === 401) { logout(); throw new Error('Unauthorized'); }
-    return res.json();
+  }catch(e){
+    showLoginMsg("Login error");
+    console.error(e);
   }
+}
 
-  // login
-  el('btnLogin').addEventListener('click', async ()=>{
-    setMsg('loginMsg','');
-    const username = el('username').value.trim();
-    const password = el('password').value.trim();
-    if(!username||!password){ setMsg('loginMsg','provide credentials'); return; }
-    try{
-      const r = await fetch(API + '/admin/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username,password})});
-      if(!r.ok){ const j=await r.json().catch(()=>({message:'login failed'})); setMsg('loginMsg', j.message||'login failed'); return; }
-      const j = await r.json();
-      localStorage.setItem('admin_token', j.token);
-      setMsg('loginMsg','Logged in');
-      loadStats(); loadVouchers(); loadSales();
-    }catch(e){ setMsg('loginMsg', e.message||'error'); }
+function showLoginMsg(m){ document.getElementById("loginMsg").innerText = m; }
+function showLogin(){ document.getElementById("loginPanel").classList.remove("hidden"); document.getElementById("dash").classList.add("hidden"); }
+function showDashboard(){ document.getElementById("loginPanel").classList.add("hidden"); document.getElementById("dash").classList.remove("hidden"); }
+
+// ---------------- LOGOUT ----------------
+function doLogout(){
+  setAuthToken(null,false);
+  location.reload();
+}
+
+// ---------------- FETCH HELPERS ----------------
+function authHeaders(){
+  const h = {"Content-Type":"application/json"};
+  if(state.token) h["Authorization"] = "Bearer " + state.token;
+  return h;
+}
+
+async function safeJson(res){
+  try { return await res.json(); } catch(e){ return null; }
+}
+
+// ---------------- CSV UPLOAD ----------------
+async function uploadCsvHandler(){
+  const f = document.getElementById("csvFile").files[0];
+  if(!f) return document.getElementById("uploadCsvMsg").innerText = "Choose a CSV file";
+
+  document.getElementById("uploadCsvMsg").innerText = "Parsing CSV...";
+  const text = await f.text();
+  const rows = csvToObjects(text);
+  if(rows.length === 0) return document.getElementById("uploadCsvMsg").innerText = "No rows found";
+
+  // Format: [{serial, pin, type}]
+  const payload = rows.map(r => ({
+    serial: (r.serial||r.Serial||"").trim(),
+    pin: (r.pin||r.Pin||"").trim(),
+    type: (r.type||r.Type||"WASSCE").toUpperCase()
+  })).filter(r => r.serial && r.pin);
+
+  document.getElementById("uploadCsvMsg").innerText = `Uploading ${payload.length} vouchers...`;
+
+  try{
+    const res = await fetch(API_BASE + "/admin/upload", {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ vouchers: payload })
+    });
+    const data = await safeJson(res);
+    document.getElementById("uploadCsvMsg").innerText = data?.message || (data?.success ? "Upload complete" : "Upload failed");
+    loadVouchers();
+  }catch(e){
+    document.getElementById("uploadCsvMsg").innerText = "Upload error";
+    console.error(e);
+  }
+}
+
+function csvToObjects(text){
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if(lines.length === 0) return [];
+  const headers = lines[0].split(",").map(h=>h.trim());
+  return lines.slice(1).map(line => {
+    const cols = line.split(",");
+    const obj = {};
+    headers.forEach((h,i) => obj[h] = (cols[i]||"").trim());
+    return obj;
+  });
+}
+
+// ---------------- ADD MANUAL VOUCHER ----------------
+async function addVoucherHandler(){
+  const serial = document.getElementById("mSerial").value.trim();
+  const pin = document.getElementById("mPin").value.trim();
+  const type = document.getElementById("mType").value;
+  if(!serial || !pin) return document.getElementById("addVoucherMsg").innerText = "Serial and pin required";
+  document.getElementById("addVoucherMsg").innerText = "Adding...";
+
+  try{
+    const res = await fetch(API_BASE + "/admin/upload", {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ vouchers: [{ serial, pin, type }] })
+    });
+    const data = await safeJson(res);
+    document.getElementById("addVoucherMsg").innerText = data?.message || (data?.success ? "Added" : "Failed");
+    document.getElementById("mSerial").value = "";
+    document.getElementById("mPin").value = "";
+    loadVouchers();
+  }catch(e){
+    document.getElementById("addVoucherMsg").innerText = "Error";
+    console.error(e);
+  }
+}
+
+// ---------------- VOUCHERS ----------------
+let cachedVouchers = [];
+async function loadVouchers(){
+  setTableMsg("vouchersMsg","Loading vouchers...");
+  try{
+    const res = await fetch(API_BASE + "/admin/vouchers", { headers: authHeaders() });
+    const data = await safeJson(res);
+    cachedVouchers = data?.vouchers || [];
+    renderVouchers();
+    setTableMsg("vouchersMsg","");
+  }catch(e){
+    setTableMsg("vouchersMsg","Error loading vouchers");
+    console.error(e);
+  }
+}
+
+function renderVouchers(){
+  const tbody = document.querySelector("#vouchersTable tbody");
+  tbody.innerHTML = "";
+  const q = (document.getElementById("searchInput").value || "").toLowerCase();
+  const filter = document.getElementById("filterUsed").value;
+
+  const rows = cachedVouchers.filter(v => {
+    if(filter !== "all" && String(v.used) !== filter) return false;
+    if(!q) return true;
+    return (v.serial||"").toLowerCase().includes(q) ||
+           (v.pin||"").toLowerCase().includes(q) ||
+           (v.phone||"").toLowerCase().includes(q) ||
+           (v.email||"").toLowerCase().includes(q);
   });
 
-  function logout(){ localStorage.removeItem('admin_token'); setMsg('loginMsg','Logged out'); }
-
-  el('btnLogout').addEventListener('click', ()=>{ logout(); });
-
-  // add single
-  el('addBtn').addEventListener('click', async ()=>{
-    setMsg('addMsg','');
-    const serial = el('serial').value.trim(), pin = el('pin').value.trim();
-    if(!serial||!pin){ setMsg('addMsg','serial & pin required'); return; }
-    try {
-      const r = await api('/admin/api/vouchers', { method:'POST', body:{ serial, pin } });
-      if(r && r.success){ setMsg('addMsg','Added'); el('serial').value=''; el('pin').value=''; loadVouchers(); loadStats(); }
-      else setMsg('addMsg', r.message||'Error');
-    } catch(e){ setMsg('addMsg', e.message||'Server error'); }
+  rows.forEach(v => {
+    const tr = document.createElement("tr");
+    const usedText = v.used ? "Yes" : "No";
+    const actions = v.used ? "" : `<button class="action-small" onclick="markUsed(${v.id}, '${escapeHtml(v.serial)}')">Mark used</button>`;
+    tr.innerHTML = `<td>${v.id}</td>
+                    <td>${escapeHtml(v.serial)}</td>
+                    <td>${escapeHtml(v.pin)}</td>
+                    <td>${escapeHtml(v.type)}</td>
+                    <td>${usedText}</td>
+                    <td>${escapeHtml(v.reference || "")}</td>
+                    <td>${actions}</td>`;
+    tbody.appendChild(tr);
   });
+}
 
-  // bulk
-  el('bulkBtn').addEventListener('click', async ()=>{
-    setMsg('bulkMsg','');
-    const f = el('csvfile').files[0];
-    if(!f){ setMsg('bulkMsg','Choose CSV'); return; }
-    const fd = new FormData(); fd.append('file', f);
-    try {
-      const res = await fetch(API + '/admin/api/vouchers/bulk', { method:'POST', headers: authHeaders(), body: fd });
-      const j = await res.json();
-      if(j && j.success){ setMsg('bulkMsg','Inserted: '+ (j.inserted||0)); loadVouchers(); loadStats(); }
-      else setMsg('bulkMsg', j.message||'Upload failed');
-    } catch(e){ setMsg('bulkMsg', e.message||'Upload error'); }
+// ---------------- MARK USED ----------------
+async function markUsed(id, serial){
+  if(!confirm("Mark voucher " + serial + " as used?")) return;
+  // If backend supports mark-used:
+  try{
+    const res = await fetch(API_BASE + "/admin/mark-used", {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ id })
+    });
+    if(res.ok){
+      await loadVouchers();
+      alert("Marked used");
+      return;
+    }
+  }catch(e){
+    console.warn("mark-used failed, falling back to refresh");
+  }
+  // fallback: trigger refresh (server should already mark when sale recorded)
+  await loadVouchers();
+}
+
+// ---------------- SALES ----------------
+let cachedSales = [];
+async function loadSales(){
+  setTableMsg("salesMsg","Loading sales...");
+  try{
+    const res = await fetch(API_BASE + "/admin/sales", { headers: authHeaders() });
+    const data = await safeJson(res);
+    cachedSales = data?.sales || [];
+    renderSales();
+    setTableMsg("salesMsg","");
+  }catch(e){
+    setTableMsg("salesMsg","Error loading sales");
+    console.error(e);
+  }
+}
+
+function renderSales(){
+  const tbody = document.querySelector("#salesTable tbody");
+  tbody.innerHTML = "";
+  cachedSales.forEach(s => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${s.id}</td>
+                    <td>${escapeHtml(s.name)}</td>
+                    <td>${escapeHtml(s.phone)}</td>
+                    <td>${escapeHtml(s.email)}</td>
+                    <td>${escapeHtml(s.voucher_serial ? s.voucher_serial + " | " + s.voucher_pin : s.voucher)}</td>
+                    <td>${escapeHtml(s.reference)}</td>
+                    <td>${escapeHtml(s.date || s.time || "")}</td>`;
+    tbody.appendChild(tr);
   });
+}
 
-  // stats
-  async function loadStats(){
-    try { const s = await api('/admin/api/stats'); el('statTotal').textContent = s.total; el('statUnused').textContent = s.unused; el('statUsed').textContent = s.used; } catch(e){ /*ignore*/ }
+// ---------------- EXPORT CSV ----------------
+function exportCsv(rows, headers){
+  const lines = [headers.join(",")].concat(rows.map(r => headers.map(h=> `"${String(r[h]||"").replace(/"/g,'""')}"`).join(",")));
+  const blob = new Blob([lines.join("\\n")], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "export.csv"; document.body.appendChild(a); a.click(); a.remove();
+}
+function exportVouchersCsv(){
+  exportCsv(cachedVouchers, ["id","serial","pin","type","used","reference"]);
+}
+function exportSalesCsv(){
+  exportCsv(cachedSales, ["id","name","phone","email","voucher_serial","voucher_pin","reference","date"]);
+}
+
+// ---------------- UTIL ----------------
+function setTableMsg(id, txt){ document.getElementById(id).innerText = txt; }
+function escapeHtml(s){ return String(s||"").replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ---------------- INIT ----------------
+async function init(){
+  if(state.token){
+    showDashboard();
+    await Promise.all([loadVouchers(), loadSales()]);
+  } else {
+    showLogin();
   }
-
-  // vouchers
-  el('refresh').addEventListener('click', loadVouchers);
-  el('filter').addEventListener('change', loadVouchers);
-  el('search').addEventListener('keyup', (e)=>{ if(e.key==='Enter') loadVouchers(); });
-
-  async function loadVouchers(){
-    const wrap = el('voucherTable'); wrap.innerHTML = 'Loading...';
-    try {
-      const res = await api('/admin/api/vouchers');
-      const list = res.vouchers||[];
-      const search = el('search').value.trim().toLowerCase();
-      const filter = el('filter').value;
-      let items = list.slice();
-      if(search) items = items.filter(v => (v.serial||'').toLowerCase().includes(search) || (v.pin||'').toLowerCase().includes(search));
-      if(filter==='used') items = items.filter(v => v.status==='used');
-      if(filter==='unused') items = items.filter(v => v.status!=='used');
-      if(!items.length){ wrap.innerHTML = '<div class="muted">No vouchers</div>'; return; }
-      wrap.innerHTML = items.map(v=> {
-        return `<div class="vrow"><div><strong>${escapeHtml(v.serial)}</strong><div class="muted">${escapeHtml(v.pin)}</div></div>
-          <div class="actions">
-            <button data-id="${v.id}" data-action="mark">Mark used</button>
-            <button data-id="${v.id}" data-action="resend">Resend</button>
-            <button data-id="${v.id}" data-action="del">Delete</button>
-          </div></div>`;
-      }).join('');
-      wrap.querySelectorAll('button[data-action]').forEach(b=>{
-        b.addEventListener('click', async (ev)=>{
-          const id = b.getAttribute('data-id'), a = b.getAttribute('data-action');
-          if(a==='mark'){ const buyer = prompt('Buyer phone/email (optional)'); if(buyer===null) return; await api(`/admin/api/vouchers/${encodeURIComponent(id)}/mark-used`, { method:'POST', body:{ buyer } }); loadVouchers(); loadStats(); }
-          if(a==='resend'){ if(!confirm('Resend SMS?')) return; await api('/admin/api/resend-sms',{ method:'POST', body:{ id } }); alert('Sent'); }
-          if(a==='del'){ if(!confirm('Delete voucher?')) return; await api(`/admin/api/vouchers/${encodeURIComponent(id)}`, { method:'DELETE' }); loadVouchers(); loadStats(); }
-        });
-      });
-    } catch(e){ wrap.innerHTML = '<div class="muted">Error loading vouchers</div>'; }
-  }
-
-  // sales
-  el('refreshSales').addEventListener('click', loadSales);
-  async function loadSales(){
-    const wrap = el('salesTable'); wrap.innerHTML = 'Loading...';
-    try {
-      const r = await api('/admin/api/sales');
-      const list = r.sales || [];
-      if(!list.length){ wrap.innerHTML = '<div class="muted">No sales</div>'; return; }
-      wrap.innerHTML = list.map(s => `<div class="vrow"><div><strong>${escapeHtml(s.phone||s.email||'Unknown')}</strong><div class="muted">${escapeHtml(s.voucher_serial||'')}</div></div><div>${new Date(s.timestamp).toLocaleString()}</div></div>`).join('');
-    } catch(e){ wrap.innerHTML = '<div class="muted">Error loading sales</div>'; }
-  }
-
-  // helper escape
-  function escapeHtml(s){ if(s===null||s===undefined) return ''; return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-  // auto load if token present
-  (function init(){ if(token()){ loadStats(); loadVouchers(); loadSales(); } })();
-
-  // expose for debugging
-  window.adminReload = loadVouchers;
-})();
-
+}
+init();
