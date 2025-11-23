@@ -72,6 +72,20 @@ async function loadVouchers() {
     alert("Failed to load vouchers");
   }
 }
+async function markUsed(code) {
+  if (!confirm(`Mark ${code} as used?`)) return;
+
+  const res = await fetch(`${API_BASE}/admin/mark-used`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ voucherCode: code })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+
+  if (data.status) loadVouchers();
+}
 
 // ================================
 // LOAD SALES
