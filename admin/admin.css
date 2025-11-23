@@ -24,3 +24,30 @@ th{background:#fafafa;position:sticky;top:0}
 .badge{padding:4px 8px;border-radius:8px;background:#eef3ff;color:var(--accent);font-size:12px}
 .action-small{padding:6px 10px;margin-left:6px;font-size:13px}
 @media (max-width:640px){ .center{margin:24px} .top h1{font-size:16px} th,td{font-size:12px} }
+/* MOBILE OPTIMIZATION */
+* {
+  box-sizing: border-box;
+}
+
+input, button, select {
+  width: 100%;
+  font-size: 16px;
+  padding: 12px;
+}
+
+/* Container centered + mobile padding */
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Make tables scrollable on mobile */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
