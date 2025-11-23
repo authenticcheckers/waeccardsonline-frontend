@@ -52,7 +52,7 @@ async function loadVouchers() {
     table.innerHTML = "";
 
     if (!data.success) {
-      table.innerHTML = "<tr><td colspan='5'>Error loading</td></tr>";
+      table.innerHTML = "<tr><td colspan='6'>Error loading</td></tr>";
       return;
     }
 
@@ -64,6 +64,9 @@ async function loadVouchers() {
           <td>${v.pin}</td>
           <td>${v.type}</td>
           <td>${v.used ? "Used" : "Unused"}</td>
+          <td>
+            ${v.used ? "" : `<button onclick="markUsed('${v.serial}')">Mark Used</button>`}
+          </td>
         </tr>
       `;
     });
@@ -72,19 +75,27 @@ async function loadVouchers() {
     alert("Failed to load vouchers");
   }
 }
-async function markUsed(code) {
-  if (!confirm(`Mark ${code} as used?`)) return;
 
-  const res = await fetch(`${API_BASE}/admin/mark-used`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ voucherCode: code })
-  });
+// ================================
+// MARK USED
+// ================================
+async function markUsed(serial) {
+  if (!confirm(`Mark ${serial} as used?`)) return;
 
-  const data = await res.json();
-  alert(data.message);
+  try {
+    const res = await fetch(`${API_BASE}/admin/mark-used`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ serial })
+    });
 
-  if (data.status) loadVouchers();
+    const data = await res.json();
+    alert(data.message);
+
+    if (data.success || data.status) loadVouchers();
+  } catch (err) {
+    alert("Failed to mark as used");
+  }
 }
 
 // ================================
@@ -166,3 +177,4 @@ async function addVoucherHandler() {
 
 window.doLogin = doLogin;
 window.addVoucherHandler = addVoucherHandler;
+window.markUsed = markUsed;
