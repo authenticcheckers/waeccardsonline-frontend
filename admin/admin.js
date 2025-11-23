@@ -56,20 +56,20 @@ async function loadVouchers() {
       return;
     }
 
-  data.data.forEach((v, i) => {
-  table.innerHTML += `
-    <tr>
-      <td>${i + 1}</td>
-      <td>${v.serial}</td>
-      <td>${v.pin}</td>
-      <td>${v.type}</td>
-      <td>${v.used ? "Used" : "Unused"}</td>
-      <td>
-        ${v.used ? "" : `<button onclick="markAsUsed('${v.serial}')">Mark Used</button>`}
-      </td>
-    </tr>
-  `;
-});
+    data.data.forEach((v, i) => {
+      table.innerHTML += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${v.serial}</td>
+          <td>${v.pin}</td>
+          <td>${v.type}</td>
+          <td>${v.used ? "Used" : "Unused"}</td>
+          <td>
+            ${v.used ? "" : `<button onclick="markAsUsed('${v.serial}')">Mark Used</button>`}
+          </td>
+        </tr>
+      `;
+    });
 
   } catch (err) {
     console.error("loadVouchers error:", err);
@@ -94,7 +94,6 @@ async function markAsUsed(serial) {
 
   if (data.status) loadVouchers();
 }
-
 
 // ================================
 // LOAD SALES
@@ -173,6 +172,9 @@ async function addVoucherHandler() {
   }
 }
 
+// ================================
+// EXPORT FUNCTIONS FOR HTML
+// ================================
 window.doLogin = doLogin;
 window.addVoucherHandler = addVoucherHandler;
-window.markUsed = markUsed;
+window.markAsUsed = markAsUsed;
