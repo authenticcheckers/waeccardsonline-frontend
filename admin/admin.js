@@ -79,24 +79,21 @@ async function loadVouchers() {
 // ================================
 // MARK USED
 // ================================
-async function markUsed(serial) {
+async function markAsUsed(serial) {
   if (!confirm(`Mark ${serial} as used?`)) return;
 
-  try {
-    const res = await fetch(`${API_BASE}/admin/mark-used`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ serial })
-    });
+  const res = await fetch(`${API_BASE}/admin/mark-used`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ serial })
+  });
 
-    const data = await res.json();
-    alert(data.message);
+  const data = await res.json();
+  alert(data.message);
 
-    if (data.success || data.status) loadVouchers();
-  } catch (err) {
-    alert("Failed to mark as used");
-  }
+  if (data.status) loadVouchers();
 }
+
 
 // ================================
 // LOAD SALES
