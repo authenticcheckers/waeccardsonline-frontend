@@ -10,6 +10,39 @@
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <style>
+  /* MOBILE OPTIMIZATION - ADD THIS */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 480px; /* keeps content readable */
+  margin: auto;
+  padding: 16px;
+}
+
+input, button, select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+}
+
+/* Makes wide tables scroll on mobile */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
   /* ---------- Typography & Vars ---------- */
   :root{
     --bg1:#07132b;
