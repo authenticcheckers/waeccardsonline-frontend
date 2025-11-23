@@ -7,13 +7,14 @@
 
   <style>
     html, body {
-  overflow-x: hidden;
-  width: 100%;
-}
+      overflow-x: hidden;
+      width: 100%;
+    }
+
     * {
-  box-sizing: border-box;
-  max-width: 100%;
-}
+      box-sizing: border-box;
+      max-width: 100%;
+    }
     
     body { font-family: Inter, system-ui, sans-serif; background:#f5f6fa; margin:0; }
     .card { background:#fff; padding:20px; margin:20px auto; max-width:900px;
@@ -24,48 +25,41 @@
              padding:10px 16px; margin-top:10px; border-radius:8px; cursor:pointer; }
     table { width:100%; border-collapse:collapse; margin-top:15px; }
     th, td { padding:10px; border-bottom:1px solid #eee; font-size:14px; }
+
     /* MOBILE OPTIMIZATION */
-* {
-  box-sizing: border-box;
-}
+    input, button, select {
+      width: 100%;
+      font-size: 16px;
+      padding: 12px;
+    }
 
-input, button, select {
-  width: 100%;
-  font-size: 16px;
-  padding: 12px;
-}
+    .container {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+      overflow-x: hidden;
+    }
 
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-/* Container centered + mobile padding */
-.container {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 16px;
-  overflow-x: hidden;
-}
-
-/* Make tables scrollable on mobile */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-table {
-  width: 100%;
-  min-width: 600px; /* allows scrolling instead of stretching page */
-}
+    table {
+      width: 100%;
+      min-width: 600px;
+    }
 
     td, th {
-  word-wrap: break-word;
-  white-space: normal;
-}
+      word-wrap: break-word;
+      white-space: normal;
+    }
 
-  body * {
-  max-width: 100vw !important;
-}
-
+    body * {
+      max-width: 100vw !important;
+    }
   </style>
 </head>
 <body>
@@ -103,35 +97,39 @@ table {
 
     <!-- Vouchers Table -->
     <h3 style="margin-top:30px;">Vouchers</h3>
-    <table class="table-wrapper">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Serial</th>
-          <th>Pin</th>
-          <th>Type</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="voucherTable"></tbody>
-    </table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Serial</th>
+            <th>Pin</th>
+            <th>Type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="voucherTable"></tbody>
+      </table>
+    </div>
 
     <!-- Sales Table -->
     <h3 style="margin-top:30px;">Sales</h3>
-    <table class="table-wrapper">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Email</th>
-          <th>Voucher Serial</th>
-          <th>Voucher Pin</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody id="salesTable"></tbody>
-    </table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Voucher Serial</th>
+            <th>Voucher Pin</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="salesTable"></tbody>
+      </table>
+    </div>
   </div>
 
   <script src="admin.js"></script>
