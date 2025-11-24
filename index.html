@@ -1,4 +1,3 @@
-<!-- Updated index.html with separate BECE section below WASSCE (clean + untouched layout) -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -68,7 +67,7 @@
   </div>
 </section>
 
-<!-- BECE SECTION (SEPARATE) -->
+<!-- BECE SECTION -->
 <section class="card" style="margin-top:40px">
   <h2>Purchase BECE Voucher</h2>
   <p class="muted">Buy BECE checker voucher — delivered instantly via SMS.</p>
@@ -108,51 +107,60 @@
 const BACKEND = "https://waecghcardsonline-backend.onrender.com";
 const PAYSTACK_PUBLIC_KEY = "pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
 
-function showMsg(el,text,isError=false){el.textContent=text;el.style.color=isError?'#ff6b6b':'#a3e635'}
+function showMsg(el,text,isError=false){
+  el.textContent=text;
+  el.style.color=isError?'#ff6b6b':'#a3e635';
+}
 
 function startPayment(e,type){
   e.preventDefault();
 
-  const name = document.getElementById(type==='WASSCE'?'name_w':'name_b').value.trim();
+  const name  = document.getElementById(type==='WASSCE'?'name_w':'name_b').value.trim();
   const phone = document.getElementById(type==='WASSCE'?'phone_w':'phone_b').value.trim();
-  const msg = document.getElementById(type==='WASSCE'?'msg_w':'msg_b');
+  const msg   = document.getElementById(type==='WASSCE'?'msg_w':'msg_b');
 
-  if(!name||!phone){showMsg(msg,"Please enter name and phone",true);return}
+  if(!name || !phone){ showMsg(msg,"Please enter name and phone",true); return }
 
   const email = `${phone}@autovoucher.com`;
-  const amount = 25*100;
+  const amount = 25 * 100;
 
   const handler = PaystackPop.setup({
-    key:PAYSTACK_PUBLIC_KEY,
-    email,amount,currency:"GHS",
-    metadata:{custom_fields:[{display_name:"phone",variable_name:"phone",value:phone},{display_name:"voucher_type",variable_name:"voucher_type",value:type}]},
+    key: PAYSTACK_PUBLIC_KEY,
+    email, amount, currency:"GHS",
 
-    callback:function(response){
+    metadata: {
+      purchaseType: type,   // ✔ REQUIRED — your backend reads this
+      phone: phone
+    },
+
+    callback: function(response){
       showMsg(msg,"Verifying payment...");
 
-      const endpoint = type==="BECE"
-        ? `${BACKEND}/verify-payment-bece`
-        : `${BACKEND}/verify-payment-wassce`;
-
-      fetch(endpoint,{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({reference:response.reference,name,phone,email})
+      fetch(`${BACKEND}/verify-payment`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          reference: response.reference
+        })
       })
       .then(r=>r.json())
       .then(data=>{
-        if(data&&data.success){
-          const serial=data.serial||"";
-          const pin=data.pin||"";
+        if(data && data.success){
+          const serial = data.serial;
+          const pin    = data.pin;
           window.location.href=`/success.html?serial=${serial}&pin=${pin}`;
         } else {
-          showMsg(msg,"Delivery failed: "+(data.message||"Contact support"),true)
+          showMsg(msg, data.message || "Delivery pending… Please wait 20 seconds.", true);
         }
       })
-      .catch(()=>showMsg(msg,"Server error verifying payment",true))
+      .catch(()=> showMsg(msg,"Server error verifying payment",true));
     },
 
-    onClose:function(){showMsg(msg,"Payment cancelled",true)}
+    onClose: function(){
+      showMsg(msg,"Payment cancelled",true);
+    }
   });
+
   handler.openIframe();
 }
 </script>
