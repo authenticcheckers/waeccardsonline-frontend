@@ -1,3 +1,4 @@
+<!-- Updated index.html with separate BECE section below WASSCE (clean + untouched layout) -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,234 +6,155 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>waeccardsonline — Instant WASSCE & BECE Voucher Delivery</title>
 <meta name="description" content="Buy authentic WASSCE and BECE checker vouchers. Instant SMS delivery." />
-
-<!-- Paystack v1 -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
-
 <style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 0; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 28px; }
-
-  :root {
-    --bg1:#07132b;
-    --bg2:#020617;
-    --gold:#d4af37;
-    --muted:rgba(255,255,255,0.75);
-    --card-bg: rgba(255,255,255,0.02);
-    --glass: rgba(255,255,255,0.03);
-  }
-
-  html,body {
-    height:100%; margin:0; font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;
-    background:radial-gradient(ellipse at top left,var(--bg1),var(--bg2)); color:#fff;
-  }
-
-  a { color:var(--gold); text-decoration:none; }
-  img { display:block; max-width:100%; }
-
+  *{box-sizing:border-box}body{margin:0;padding:0}.container{max-width:1100px;margin:0 auto;padding:28px}
+  :root{--bg1:#07132b;--bg2:#020617;--gold:#d4af37;--muted:rgba(255,255,255,0.75);--card-bg:rgba(255,255,255,0.02);--glass:rgba(255,255,255,0.03)}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:radial-gradient(ellipse at top left,var(--bg1),var(--bg2));color:#fff}
+  a{color:var(--gold);text-decoration:none}img{display:block;max-width:100%}
   header{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b78f2b);display:flex;align-items:center;justify-content:center;color:var(--bg1);font-weight:800}
+  .brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b78f2b);display:flex;align-items:center;justify-content:center;color:var(--bg1);font-weight:800}
   nav a{margin-left:18px;color:var(--muted);font-weight:600;font-size:14px}
-
   .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;padding:36px 0}
-  .hero-left h1{font-size:44px;line-height:1.02;margin:0 0 12px}
-  .hero-left p{color:var(--muted);margin:0 0 24px}
-
-  .card {
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.03);
-    box-shadow:0 6px 18px rgba(0,0,0,0.35)
-  }
-
-  .input {width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:var(--glass); color:#fff;}
-
-  .btn {
-    background:var(--gold); color:var(--bg1);
-    padding:12px 18px; border-radius:12px; border:none; font-weight:800;
-    cursor:pointer; transition:.18s ease;
-  }
-
-  /* Tabs */
-  .tab-row { display:flex; gap:10px; margin-bottom:18px; }
-  .tab-btn {
-    flex:1; padding:10px; border-radius:10px;
-    border:1px solid rgba(255,255,255,0.12);
-    background:rgba(255,255,255,0.05);
-    color:#fff; cursor:pointer; font-weight:600;
-  }
-  .tab-btn.active {
-    background:var(--gold);
-    color:var(--bg1);
-    border:none;
-  }
-
+  .hero-left h1{font-size:44px;line-height:1.02;margin:0 0 12px}.hero-left p{color:var(--muted);margin:0 0 24px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:#fff}
+  .btn{background:var(--gold);color:var(--bg1);padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;transition:.18s ease}
   footer{padding:28px 0;color:rgba(255,255,255,0.5);text-align:center}
 </style>
 </head>
-
-<body class="page-fade">
-
+<body>
 <div class="container">
 
-  <header>
-    <div class="brand">
-      <div class="logo">AC</div>
-      <div>
-        <div style="font-weight:800;font-size:16px">Waec Gh Cards Online</div>
-        <div class="muted" style="font-size:13px">Instant voucher delivery</div>
-      </div>
+<header>
+  <div class="brand">
+    <div class="logo">AC</div>
+    <div>
+      <div style="font-weight:800;font-size:16px">Waec Gh Cards Online</div>
+      <div class="muted" style="font-size:13px">Instant voucher delivery</div>
     </div>
-    <nav>
-      <a href="#how">How it works</a>
-      <a href="#faq">FAQ</a>
-      <a href="#buy" class="btn-ghost">Buy Now</a>
-    </nav>
-  </header>
+  </div>
+  <nav>
+    <a href="#how">How it works</a>
+    <a href="#faq">FAQ</a>
+    <a href="#buy" class="btn-ghost">Buy Now</a>
+  </nav>
+</header>
 
-  <section class="hero">
+<section class="hero" id="buy">
+  <div class="hero-left">
+    <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--gold)">Instantly</span></h1>
+    <p class="muted">Secure, fast delivery. Receive your voucher instantly by SMS after payment.</p>
+    <button class="btn" onclick="document.getElementById('wassceForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
+    <div style="margin-top:18px" class="muted"><strong>Price:</strong> GHS 25 per voucher · <strong>SMS delivery</strong></div>
+  </div>
 
-    <div class="hero-left">
-      <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--gold)">Instantly</span></h1>
-      <p class="muted">Secure, fast delivery. Receive your voucher instantly by SMS after payment.</p>
+  <!-- WASSCE PURCHASE CARD -->
+  <div class="hero-right card">
+    <h3>Purchase WASSCE Voucher</h3>
+    <div class="muted" style="font-size:13px;margin-bottom:12px">Enter your details — we send the voucher by SMS.</div>
 
-      <button class="btn" onclick="document.getElementById('buyForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
+    <form id="wassceForm" onsubmit="startPayment(event,'WASSCE')">
+      <label>Full Name</label>
+      <input id="name_w" class="input" required />
 
-      <div style="margin-top:18px" class="muted">
-        <strong>Price:</strong> GHS 25 per voucher · <strong>SMS delivery</strong>
-      </div>
-    </div>
+      <label>Phone number</label>
+      <input id="phone_w" class="input" placeholder="0244123456" pattern="[0-9]+" required />
+      <div class="muted">Use a Ghanaian number (e.g. 0244123456)</div>
 
-    <!-- RIGHT CARD -->
-    <div class="hero-right card">
-      <h3 style="margin:0 0 8px">Purchase Voucher</h3>
-      <div class="muted" style="font-size:13px;margin-bottom:12px">Enter your details — we send the voucher by SMS.</div>
+      <button class="btn" type="submit" style="margin-top:12px">Pay GHS 25</button>
+      <div id="msg_w" class="muted" style="margin-top:10px"></div>
+    </form>
+  </div>
+</section>
 
-      <!-- TABS -->
-      <div class="tab-row">
-        <button type="button" class="tab-btn active" onclick="switchVoucher('WASSCE')">WASSCE</button>
-        <button type="button" class="tab-btn" onclick="switchVoucher('BECE')">BECE</button>
-      </div>
+<!-- BECE SECTION (SEPARATE) -->
+<section class="card" style="margin-top:40px">
+  <h2>Purchase BECE Voucher</h2>
+  <p class="muted">Buy BECE checker voucher — delivered instantly via SMS.</p>
 
-      <!-- Hidden voucher type -->
-      <input type="hidden" id="voucherType" value="WASSCE" />
+  <form id="beceForm" onsubmit="startPayment(event,'BECE')">
+    <label>Full Name</label>
+    <input id="name_b" class="input" required />
 
-      <form id="buyForm" class="form" onsubmit="startPaymentFromForm(event)">
-        <label>Full Name</label>
-        <input id="name" class="input" required />
+    <label>Phone number</label>
+    <input id="phone_b" class="input" placeholder="0244123456" pattern="[0-9]+" required />
+    <div class="muted">Use a Ghanaian number (e.g. 0244123456)</div>
 
-        <label>Phone number</label>
-        <input id="phone" class="input" placeholder="0244123456" pattern="[0-9]+" required />
-        <div class="muted">Use a Ghanaian number (e.g. 0244123456)</div>
+    <button class="btn" type="submit" style="margin-top:12px">Pay GHS 25</button>
+    <div id="msg_b" class="muted" style="margin-top:10px"></div>
+  </form>
+</section>
 
-        <button id="payBtn" class="btn" type="submit" style="margin-top:12px">Pay GHS 25</button>
+<section id="how" class="card" style="margin-top:28px">
+  <h3>How it works</h3>
+  <ol style="color:var(--muted)">
+    <li>Fill details and complete payment via Paystack.</li>
+    <li>We verify payment and reserve an unused voucher.</li>
+    <li>Voucher is sent instantly to your phone via SMS.</li>
+  </ol>
+</section>
 
-        <div id="buyMsg" class="muted" style="margin-top:10px"></div>
-      </form>
-
-    </div>
-  </section>
-
-
-  <section id="how" class="card" style="margin-top:28px">
-    <h3>How it works</h3>
-    <ol style="color:var(--muted)">
-      <li>Fill details and complete payment via Paystack.</li>
-      <li>We verify payment and reserve an unused voucher.</li>
-      <li>Voucher is sent instantly to your phone via SMS.</li>
-    </ol>
-  </section>
-
-  <section id="faq" class="card" style="margin-top:18px">
-    <h3>FAQ</h3>
-    <div class="muted">
-      <strong>Delivery Time:</strong> Instant after payment.<br>
-      <strong>Didn't receive SMS?</strong> Contact support.
-    </div>
-  </section>
-
+<section id="faq" class="card" style="margin-top:18px">
+  <h3>FAQ</h3>
+  <div class="muted">
+    <strong>Delivery Time:</strong> Instant after payment.<br>
+    <strong>Didn't receive SMS?</strong> Contact support.
+  </div>
+</section>
 </div>
-
 
 <script>
 const BACKEND = "https://waecghcardsonline-backend.onrender.com";
 const PAYSTACK_PUBLIC_KEY = "pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
 
-function showMsg(text, isError=false){
-  const el = document.getElementById('buyMsg');
-  el.textContent = text;
-  el.style.color = isError ? '#ff6b6b' : '#a3e635';
-}
+function showMsg(el,text,isError=false){el.textContent=text;el.style.color=isError?'#ff6b6b':'#a3e635'}
 
-/* TAB SWITCH */
-function switchVoucher(type) {
-  document.getElementById("voucherType").value = type;
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-  document.querySelector(`.tab-btn[onclick="switchVoucher('${type}')"]`).classList.add("active");
-}
-
-/* PAYMENT */
-function startPaymentFromForm(e){
+function startPayment(e,type){
   e.preventDefault();
 
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const type = document.getElementById('voucherType').value;
+  const name = document.getElementById(type==='WASSCE'?'name_w':'name_b').value.trim();
+  const phone = document.getElementById(type==='WASSCE'?'phone_w':'phone_b').value.trim();
+  const msg = document.getElementById(type==='WASSCE'?'msg_w':'msg_b');
 
-  if(!name || !phone){
-    showMsg("Please enter name and phone.", true);
-    return;
-  }
+  if(!name||!phone){showMsg(msg,"Please enter name and phone",true);return}
 
   const email = `${phone}@autovoucher.com`;
-  const amount = 25 * 100;
+  const amount = 25*100;
 
   const handler = PaystackPop.setup({
-    key: PAYSTACK_PUBLIC_KEY,
-    email,
-    amount,
-    currency: 'GHS',
-    metadata: {
-      custom_fields:[
-        { display_name: 'phone', variable_name:'phone', value: phone },
-        { display_name: 'voucher_type', variable_name:'voucher_type', value: type }
-      ]
-    },
-    callback: function(response){
-      showMsg("Verifying payment...");
+    key:PAYSTACK_PUBLIC_KEY,
+    email,amount,currency:"GHS",
+    metadata:{custom_fields:[{display_name:"phone",variable_name:"phone",value:phone},{display_name:"voucher_type",variable_name:"voucher_type",value:type}]},
 
-      const endpoint = type === "BECE"
+    callback:function(response){
+      showMsg(msg,"Verifying payment...");
+
+      const endpoint = type==="BECE"
         ? `${BACKEND}/verify-payment-bece`
         : `${BACKEND}/verify-payment-wassce`;
 
-      fetch(endpoint, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({ reference:response.reference, name, phone, email })
+      fetch(endpoint,{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({reference:response.reference,name,phone,email})
       })
       .then(r=>r.json())
       .then(data=>{
-        if(data && data.success){
-          const serial = data.serial || '';
-          const pin = data.pin || '';
-          window.location.href = `/success.html?serial=${serial}&pin=${pin}`;
+        if(data&&data.success){
+          const serial=data.serial||"";
+          const pin=data.pin||"";
+          window.location.href=`/success.html?serial=${serial}&pin=${pin}`;
         } else {
-          showMsg("Delivery failed: " + (data.message || "Contact support"), true);
+          showMsg(msg,"Delivery failed: "+(data.message||"Contact support"),true)
         }
       })
-      .catch(err=>{
-        showMsg("Server error verifying payment.", true);
-      });
+      .catch(()=>showMsg(msg,"Server error verifying payment",true))
     },
-    onClose: function(){
-      showMsg("Payment cancelled", true);
-    }
-  });
 
+    onClose:function(){showMsg(msg,"Payment cancelled",true)}
+  });
   handler.openIframe();
 }
 </script>
-
 </body>
 </html>
