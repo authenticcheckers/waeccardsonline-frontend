@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voucher Retrieved Successfully</title>
+    <title><%= purchaseType %> Voucher Retrieved Successfully</title>
 
     <style>
         body {
@@ -41,12 +41,19 @@
             color: #1b5e20;
         }
 
+        .voucher-label {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+        }
+
         .voucher-box {
             background: #fafafa;
             border: 1px solid #dcdcdc;
             border-radius: 10px;
-            padding: 18px;
-            margin-top: 10px;
+            padding: 14px;
+            margin-top: 6px;
             font-size: 18px;
             font-weight: bold;
             letter-spacing: 1px;
@@ -87,38 +94,49 @@
             font-size: 14px;
             color: #555;
         }
-
     </style>
 
-    <!-- jsPDF for PDF Download -->
+    <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
 
 <div class="container">
-    <h2>Payment Successful 🎉</h2>
+    <h2><%= purchaseType %> Payment Successful 🎉</h2>
 
     <div class="success-box">
-        Your WASSCE result checker voucher has been generated.
+        Your <%= purchaseType %> result checker voucher has been generated.
     </div>
 
-    <div class="voucher-box" id="voucherBox">
-        <%= voucher %>
+    <!-- SERIAL -->
+    <div class="voucher-label">Serial Number</div>
+    <div class="voucher-box" id="serialBox">
+        <%= serial %>
+    </div>
+
+    <!-- PIN -->
+    <div class="voucher-label">PIN</div>
+    <div class="voucher-box" id="pinBox">
+        <%= pin %>
     </div>
 
     <button class="copy-btn" onclick="copyVoucher()">Copy Voucher</button>
     <button class="pdf-btn" onclick="downloadPDF()">Download as PDF</button>
 
     <div class="footer">
-        Thank you for using <strong>Authentic Checkers</strong>.
+        Thank you for your purchase.
     </div>
 </div>
 
 <script>
     function copyVoucher() {
-        const code = document.getElementById("voucherBox").innerText;
-        navigator.clipboard.writeText(code).then(() => {
+        const serial = document.getElementById("serialBox").innerText;
+        const pin = document.getElementById("pinBox").innerText;
+
+        const text = `Serial: ${serial}\nPIN: ${pin}`;
+
+        navigator.clipboard.writeText(text).then(() => {
             alert("Voucher copied!");
         });
     }
@@ -127,24 +145,27 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        const voucher = document.getElementById("voucherBox").innerText;
+        const serial = document.getElementById("serialBox").innerText;
+        const pin = document.getElementById("pinBox").innerText;
+        const type = "<%= purchaseType %>";
 
         doc.setFontSize(18);
-        doc.text("Authentic Checkers", 10, 20);
+        doc.text(type + " Results Checker Voucher", 10, 20);
 
         doc.setFontSize(14);
-        doc.text("WASSCE Results Checker Voucher", 10, 35);
+        doc.text("Serial Number:", 10, 40);
+        doc.setFontSize(16);
+        doc.text(serial, 10, 50);
 
-        doc.setFontSize(12);
-        doc.text("Voucher Code:", 10, 55);
-
-        doc.setFontSize(20);
-        doc.text(voucher, 10, 70);
+        doc.setFontSize(14);
+        doc.text("PIN:", 10, 70);
+        doc.setFontSize(16);
+        doc.text(pin, 10, 80);
 
         doc.setFontSize(10);
-        doc.text("Thank you for your purchase!", 10, 95);
+        doc.text("Thank you for your purchase.", 10, 105);
 
-        doc.save("WASSCE_Voucher.pdf");
+        doc.save(type + "_Voucher.pdf");
     }
 </script>
 
