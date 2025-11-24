@@ -6,45 +6,15 @@
 <title>waeccardsonline — Instant WASSCE & BECE Voucher Delivery</title>
 <meta name="description" content="Buy authentic WASSCE and BECE checker vouchers. Instant SMS delivery." />
 
-<!-- Paystack v1 (required for PaystackPop.setup) -->
+<!-- Paystack v1 -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <style>
-  /* MOBILE OPTIMIZATION - ADD THIS */
-* {
-  box-sizing: border-box;
-}
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px; }
 
-body {
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 480px; /* keeps content readable */
-  margin: auto;
-  padding: 16px;
-}
-
-input, button, select {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
-}
-
-/* Makes wide tables scroll on mobile */
-.table-wrapper {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-  /* ---------- Typography & Vars ---------- */
-  :root{
+  :root {
     --bg1:#07132b;
     --bg2:#020617;
     --gold:#d4af37;
@@ -52,227 +22,170 @@ table {
     --card-bg: rgba(255,255,255,0.02);
     --glass: rgba(255,255,255,0.03);
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:radial-gradient(ellipse at top left,var(--bg1),var(--bg2));color:#fff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-  a{color:var(--gold);text-decoration:none}
-  img{display:block;max-width:100%}
 
-  /* ---------- Layout ---------- */
-  .container{max-width:1100px;margin:0 auto;padding:28px;}
+  html,body {
+    height:100%; margin:0; font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;
+    background:radial-gradient(ellipse at top left,var(--bg1),var(--bg2)); color:#fff;
+  }
+
+  a { color:var(--gold); text-decoration:none; }
+  img { display:block; max-width:100%; }
+
   header{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
   .brand{display:flex;gap:12px;align-items:center}
   .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b78f2b);display:flex;align-items:center;justify-content:center;color:var(--bg1);font-weight:800}
   nav a{margin-left:18px;color:var(--muted);font-weight:600;font-size:14px}
 
-  /* ---------- Hero ---------- */
   .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;padding:36px 0}
   .hero-left h1{font-size:44px;line-height:1.02;margin:0 0 12px}
   .hero-left p{color:var(--muted);margin:0 0 24px}
-  .cta-row{display:flex;gap:14px;align-items:center}
 
-  /* ---------- Cards & Form ---------- */
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(0,0,0,0.35)}
-  .form .row{margin-bottom:12px}
-  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-  input.input, select.input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:#fff;outline:none}
-  .muted{color:var(--muted)}
-
-  /* ---------- Button ---------- */
-  .btn{
-    background:var(--gold);color:var(--bg1);padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;
-    box-shadow:0 6px 18px rgba(215,175,70,0.18);transition:transform .18s ease, box-shadow .18s ease;
-  }
-  .btn:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(215,175,70,0.22)}
-  .btn:active{transform:translateY(-1px) scale(0.995)}
-
-  /* ---------- Animations (page load & scroll) ---------- */
-  .page-fade{opacity:0;transform:translateY(18px);animation:pageIn .6s cubic-bezier(.2,.9,.2,1) forwards}
-  @keyframes pageIn{to{opacity:1;transform:none}}
-
-  .scroll-anim{opacity:0;transform:translateY(30px);transition:opacity .7s ease, transform .7s ease}
-  .scroll-anim.is-visible{opacity:1;transform:none}
-
-  .card-pop{transform-origin:center;opacity:0;transform:scale(.94) translateY(6px);transition:transform .45s cubic-bezier(.2,.9,.2,1), opacity .45s}
-  .card-pop.is-visible{opacity:1;transform:none}
-
-  /* ---------- Button micro animations ---------- */
-  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;padding:10px 14px;border-radius:10px}
-  .btn-ghost:hover{transform:translateY(-3px)}
-
-  /* ---------- Responsive ---------- */
-  @media (max-width:960px){
-    .hero{grid-template-columns:1fr; padding-bottom:8px}
-    .hero-right{order:-1}
-  }
-  @media (max-width:520px){
-    .container{padding:16px}
-    .hero-left h1{font-size:28px}
+  .card {
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 6px 18px rgba(0,0,0,0.35)
   }
 
-  /* ---------- Small helpers ---------- */
-  .flex{display:flex;gap:12px;align-items:center}
-  .space-y{display:flex;flex-direction:column;gap:12px}
-  .center{display:flex;align-items:center;justify-content:center}
-  .hint{font-size:13px;color:var(--muted)}
+  .input {width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:var(--glass); color:#fff;}
+
+  .btn {
+    background:var(--gold); color:var(--bg1);
+    padding:12px 18px; border-radius:12px; border:none; font-weight:800;
+    cursor:pointer; transition:.18s ease;
+  }
+
+  /* Tabs */
+  .tab-row { display:flex; gap:10px; margin-bottom:18px; }
+  .tab-btn {
+    flex:1; padding:10px; border-radius:10px;
+    border:1px solid rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.05);
+    color:#fff; cursor:pointer; font-weight:600;
+  }
+  .tab-btn.active {
+    background:var(--gold);
+    color:var(--bg1);
+    border:none;
+  }
+
   footer{padding:28px 0;color:rgba(255,255,255,0.5);text-align:center}
 </style>
 </head>
+
 <body class="page-fade">
 
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo">AC</div>
-        <div>
-          <div style="font-weight:800;font-size:16px">Waec Gh Cards Online</div>
-          <div class="muted" style="font-size:13px">Instant voucher delivery</div>
-        </div>
+<div class="container">
+
+  <header>
+    <div class="brand">
+      <div class="logo">AC</div>
+      <div>
+        <div style="font-weight:800;font-size:16px">Waec Gh Cards Online</div>
+        <div class="muted" style="font-size:13px">Instant voucher delivery</div>
       </div>
-      <nav>
-        <a href="#how">How it works</a>
-        <a href="#faq">FAQ</a>
-        <a href="#buy" class="btn-ghost">Buy Now</a>
-      </nav>
-    </header>
+    </div>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#buy" class="btn-ghost">Buy Now</a>
+    </nav>
+  </header>
 
-    <section class="hero">
-      <!-- LEFT: hero copy -->
-      <div class="hero-left scroll-anim">
-        <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--gold)">Instantly</span></h1>
-        <p class="muted">Secure, fast delivery. Receive your voucher instantly by SMS after payment.</p>
+  <section class="hero">
 
-        <div class="cta-row">
-          <button class="btn" onclick="document.getElementById('buyForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
-          <a class="btn-ghost" href="#how">How it works</a>
-        </div>
+    <div class="hero-left">
+      <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--gold)">Instantly</span></h1>
+      <p class="muted">Secure, fast delivery. Receive your voucher instantly by SMS after payment.</p>
 
-        <div style="margin-top:18px" class="muted">
-          <strong>Price:</strong> GHS 25 per voucher · <strong>SMS delivery</strong>
-        </div>
+      <button class="btn" onclick="document.getElementById('buyForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
+
+      <div style="margin-top:18px" class="muted">
+        <strong>Price:</strong> GHS 25 per voucher · <strong>SMS delivery</strong>
+      </div>
+    </div>
+
+    <!-- RIGHT CARD -->
+    <div class="hero-right card">
+      <h3 style="margin:0 0 8px">Purchase Voucher</h3>
+      <div class="muted" style="font-size:13px;margin-bottom:12px">Enter your details — we send the voucher by SMS.</div>
+
+      <!-- TABS -->
+      <div class="tab-row">
+        <button type="button" class="tab-btn active" onclick="switchVoucher('WASSCE')">WASSCE</button>
+        <button type="button" class="tab-btn" onclick="switchVoucher('BECE')">BECE</button>
       </div>
 
-      <!-- RIGHT: purchase card -->
-      <div class="hero-right card card-pop">
-        <h3 style="margin:0 0 8px">Purchase Voucher</h3>
-        <div class="muted" style="font-size:13px;margin-bottom:12px">Enter your details — we send the voucher by SMS.</div>
+      <!-- Hidden voucher type -->
+      <input type="hidden" id="voucherType" value="WASSCE" />
 
-        <form id="buyForm" class="form space-y" onsubmit="startPaymentFromForm(event)">
-          <div class="row">
-            <label>Full Name</label>
-            <input id="name" class="input" autocomplete="name" required />
-          </div>
+      <form id="buyForm" class="form" onsubmit="startPaymentFromForm(event)">
+        <label>Full Name</label>
+        <input id="name" class="input" required />
 
-          <div class="row">
-            <label>Phone number</label>
-            <input id="phone" class="input" placeholder="0244123456" pattern="[0-9]+" required />
-            <div class="hint">Use a Ghanaian number (e.g. 0244123456)</div>
-          </div>
+        <label>Phone number</label>
+        <input id="phone" class="input" placeholder="0244123456" pattern="[0-9]+" required />
+        <div class="muted">Use a Ghanaian number (e.g. 0244123456)</div>
 
-          <div class="row">
-            <label>Voucher type</label>
-            <select id="voucherType" class="input">
-              <option value="WASSCE">WASSCE (SHS)</option>
-              <option value="BECE">BECE (JHS)</option>
-            </select>
-          </div>
+        <button id="payBtn" class="btn" type="submit" style="margin-top:12px">Pay GHS 25</button>
 
-          <div class="row center">
-            <button id="payBtn" class="btn" type="submit">Pay GHS 25</button>
-            
+        <div id="buyMsg" class="muted" style="margin-top:10px"></div>
+      </form>
 
-          <div id="buyMsg" class="hint"></div>
-        </form>
-      </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- How it works -->
-    <section id="how" class="card card-pop scroll-anim" style="margin-top:28px">
-      <h3>How it works</h3>
-      <ol style="margin:8px 0 0 18px;color:var(--muted)">
-        <li>Fill details and complete payment via Paystack.</li>
-        <li>We verify payment and reserve an unused voucher (BECE/WASSCE).</li>
-        <li>Voucher is sent instantly to your phone via SMS.</li>
-      </ol>
-    </section>
 
-    <!-- Features -->
-    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:18px">
-      <div class="card card-pop scroll-anim">
-        <h4 style="margin:0 0 8px">Instant Delivery</h4>
-        <div class="muted">Get your voucher immediately after payment via SMS.</div>
-      </div>
-      <div class="card card-pop scroll-anim">
-        <h4 style="margin:0 0 8px">Secure Payments</h4>
-        <div class="muted">Payments processed by Paystack (inline checkout).</div>
-      </div>
-      <div class="card card-pop scroll-anim">
-        <h4 style="margin:0 0 8px">Easy Admin</h4>
-        <div class="muted">Admin can upload vouchers, resend SMS, and review sales.</div>
-      </div>
-    </section>
+  <section id="how" class="card" style="margin-top:28px">
+    <h3>How it works</h3>
+    <ol style="color:var(--muted)">
+      <li>Fill details and complete payment via Paystack.</li>
+      <li>We verify payment and reserve an unused voucher.</li>
+      <li>Voucher is sent instantly to your phone via SMS.</li>
+    </ol>
+  </section>
 
-    <!-- FAQ -->
-    <section id="faq" class="card card-pop scroll-anim" style="margin-top:18px">
-      <h3>FAQ</h3>
-      <div class="muted">
-        <strong>Delivery Time:</strong> Instant after payment.<br>
-        <strong>Didn't receive SMS?</strong> Use the admin resend tool or contact support.
-      </div>
-    </section>
-  </div>
+  <section id="faq" class="card" style="margin-top:18px">
+    <h3>FAQ</h3>
+    <div class="muted">
+      <strong>Delivery Time:</strong> Instant after payment.<br>
+      <strong>Didn't receive SMS?</strong> Contact support.
+    </div>
+  </section>
+
+</div>
+
 
 <script>
-/* ============================
-   Configuration
-   ============================ */
 const BACKEND = "https://waecghcardsonline-backend.onrender.com";
 const PAYSTACK_PUBLIC_KEY = "pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
 
-/* ============================
-   Utilities
-   ============================ */
 function showMsg(text, isError=false){
   const el = document.getElementById('buyMsg');
   el.textContent = text;
   el.style.color = isError ? '#ff6b6b' : '#a3e635';
 }
 
-/* ============================
-   Animations: IntersectionObserver
-   ============================ */
-(function initScrollAnimations(){
-  const obs = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        entry.target.classList.add('is-visible');
-      }
-    });
-  }, { threshold: 0.12 });
+/* TAB SWITCH */
+function switchVoucher(type) {
+  document.getElementById("voucherType").value = type;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelector(`.tab-btn[onclick="switchVoucher('${type}')"]`).classList.add("active");
+}
 
-  document.querySelectorAll('.scroll-anim, .card-pop, .hero-left').forEach(el=>{
-    obs.observe(el);
-  });
-})();
-
-/* ============================
-   Payment flow
-   - Using Paystack v1 inline (PaystackPop.setup)
-   - Auto-generates email from phone to satisfy Paystack
-   ============================ */
+/* PAYMENT */
 function startPaymentFromForm(e){
   e.preventDefault();
+
   const name = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const type = document.getElementById('voucherType').value;
 
   if(!name || !phone){
-    showMsg('Please enter name and phone.', true);
+    showMsg("Please enter name and phone.", true);
     return;
   }
 
-  // auto email to satisfy Paystack requirement
   const email = `${phone}@autovoucher.com`;
-
-  // Paystack expects amount in kobo/lowest currency unit (GHS*100)
   const amount = 25 * 100;
 
   const handler = PaystackPop.setup({
@@ -282,47 +195,44 @@ function startPaymentFromForm(e){
     currency: 'GHS',
     metadata: {
       custom_fields:[
-        { display_name: 'phone', variable_name: 'phone', value: phone },
-        { display_name: 'voucher_type', variable_name: 'voucher_type', value: type }
+        { display_name: 'phone', variable_name:'phone', value: phone },
+        { display_name: 'voucher_type', variable_name:'voucher_type', value: type }
       ]
     },
     callback: function(response){
-      showMsg('Verifying payment...');
-      fetch(`${BACKEND}/verify-payment`, {
+      showMsg("Verifying payment...");
+
+      const endpoint = type === "BECE"
+        ? `${BACKEND}/verify-payment-bece`
+        : `${BACKEND}/verify-payment-wassce`;
+
+      fetch(endpoint, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          reference: response.reference,
-          name,
-          phone,
-          email,
-          type
-        })
+        body:JSON.stringify({ reference:response.reference, name, phone, email })
       })
       .then(r=>r.json())
       .then(data=>{
         if(data && data.success){
-          showMsg('Payment successful — redirecting...');
-          // prefer serial/pin fields if present otherwise voucher string
-          const serial = data.serial || (data.voucher && data.voucher.split('|')[0]?.trim()) || '';
-          const pin = data.pin || (data.voucher && data.voucher.split('|')[1]?.trim()) || '';
-          window.location.href = `/success.html?serial=${encodeURIComponent(serial)}&pin=${encodeURIComponent(pin)}`;
+          const serial = data.serial || '';
+          const pin = data.pin || '';
+          window.location.href = `/success.html?serial=${serial}&pin=${pin}`;
         } else {
-          showMsg('Delivery failed: ' + (data.message || 'Contact support'), true);
+          showMsg("Delivery failed: " + (data.message || "Contact support"), true);
         }
       })
       .catch(err=>{
-        console.error('verify error', err);
-        showMsg('Server error verifying payment. Try again or contact support.', true);
+        showMsg("Server error verifying payment.", true);
       });
     },
     onClose: function(){
-      showMsg('Payment cancelled', true);
+      showMsg("Payment cancelled", true);
     }
   });
 
   handler.openIframe();
 }
 </script>
+
 </body>
 </html>
