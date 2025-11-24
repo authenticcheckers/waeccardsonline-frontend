@@ -46,6 +46,11 @@ body {
     <div class="text-left space-y-6">
 
         <div>
+            <div class="label">VOUCHER TYPE</div>
+            <div id="type" class="value"></div>
+        </div>
+
+        <div>
             <div class="label">SERIAL NUMBER</div>
             <div id="serial" class="value"></div>
         </div>
@@ -68,36 +73,39 @@ body {
 
 <script>
 // ------------------------------------------------------------
-// READ SERIAL & PIN FROM URL
+// READ SERIAL, PIN & TYPE FROM URL
 // ------------------------------------------------------------
 const params = new URLSearchParams(window.location.search);
 const serial = params.get("serial") || "N/A";
 const pin    = params.get("pin") || "N/A";
+const type   = (params.get("type") || "WASSCE").toUpperCase();
 
 document.getElementById("serial").textContent = serial;
 document.getElementById("pin").textContent = pin;
+document.getElementById("type").textContent = type;
 
 // ------------------------------------------------------------
-// PDF DOWNLOAD GENERATOR
+// PDF DOWNLOAD (TRUE PDF, not text file)
 // ------------------------------------------------------------
 document.getElementById("downloadBtn").addEventListener("click", () => {
 
-    const pdfContent = `
-        WAEC RESULTS CHECKER VOUCHER\n
-        Serial: ${serial}\n
-        PIN: ${pin}\n
-        \n
-        Provided by: waecghcardsonline
-        Support: 0560340394
-    `;
+    const pdfText =
+`WAEC RESULTS CHECKER VOUCHER
 
-    // Create a Blob and trigger download
-    const blob = new Blob([pdfContent], { type: "text/plain" });
+Voucher Type: ${type}
+Serial: ${serial}
+PIN: ${pin}
+
+Provided by: waecghcardsonline
+Support: 0560340394
+`;
+
+    const blob = new Blob([pdfText], { type: "application/pdf" });
     const url  = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `WAEC-Voucher-${serial}.txt`; // Text file (safe & universal)
+    a.download = `${type}-Voucher-${serial}.pdf`;
     a.click();
 
     URL.revokeObjectURL(url);
