@@ -6,20 +6,148 @@
 <title>waeccardsonline — Instant WASSCE & BECE Voucher Delivery</title>
 <meta name="description" content="Buy authentic WASSCE and BECE checker vouchers. Instant SMS delivery." />
 <script src="https://js.paystack.co/v1/inline.js"></script>
+
 <style>
-  *{box-sizing:border-box}body{margin:0;padding:0}.container{max-width:1100px;margin:0 auto;padding:28px}
-  :root{--bg1:#07132b;--bg2:#020617;--gold:#d4af37;--muted:rgba(255,255,255,0.75);--card-bg:rgba(255,255,255,0.02);--glass:rgba(255,255,255,0.03)}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:radial-gradient(ellipse at top left,var(--bg1),var(--bg2));color:#fff}
-  a{color:var(--gold);text-decoration:none}img{display:block;max-width:100%}
-  header{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-  .brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b78f2b);display:flex;align-items:center;justify-content:center;color:var(--bg1);font-weight:800}
-  nav a{margin-left:18px;color:var(--muted);font-weight:600;font-size:14px}
-  .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;padding:36px 0}
-  .hero-left h1{font-size:44px;line-height:1.02;margin:0 0 12px}.hero-left p{color:var(--muted);margin:0 0 24px}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(0,0,0,.35)}
-  .input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:#fff}
-  .btn{background:var(--gold);color:var(--bg1);padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;transition:.18s ease}
-  footer{padding:28px 0;color:rgba(255,255,255,0.5);text-align:center}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0}
+  .container{max-width:1100px;margin:0 auto;padding:28px}
+
+  :root{
+    --bg1:#07132b;
+    --bg2:#020617;
+    --gold:#d4af37;
+    --muted:rgba(255,255,255,0.75);
+    --card-bg:rgba(255,255,255,0.02);
+    --glass:rgba(255,255,255,0.03)
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;
+    background:radial-gradient(ellipse at top left,var(--bg1),var(--bg2));
+    color:#fff
+  }
+
+  a{color:var(--gold);text-decoration:none}
+  img{display:block;max-width:100%}
+
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 0
+  }
+
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{
+    width:48px;height:48px;border-radius:10px;
+    background:linear-gradient(135deg,var(--gold),#b78f2b);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--bg1);font-weight:800
+  }
+
+  nav a{
+    margin-left:18px;
+    color:var(--muted);
+    font-weight:600;
+    font-size:14px
+  }
+
+  .hero{
+    display:grid;
+    grid-template-columns:1fr 420px;
+    gap:32px;
+    align-items:center;
+    padding:36px 0
+  }
+
+  .hero-left h1{
+    font-size:44px;
+    line-height:1.02;
+    margin:0 0 12px
+  }
+  .hero-left p{color:var(--muted);margin:0 0 24px}
+
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+    padding:20px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 6px 18px rgba(0,0,0,.35)
+  }
+
+  .input{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.04);
+    background:var(--glass);
+    color:#fff;
+    font-size:16px
+  }
+
+  .btn{
+    background:var(--gold);
+    color:var(--bg1);
+    padding:14px 18px;
+    border-radius:12px;
+    border:none;
+    font-weight:800;
+    cursor:pointer;
+    font-size:16px;
+    width:100%;
+    transition:.18s ease
+  }
+
+  footer{
+    padding:28px 0;
+    color:rgba(255,255,255,0.5);
+    text-align:center
+  }
+
+  /* ----------------------------------
+        MOBILE OPTIMIZATION
+     ---------------------------------- */
+  @media(max-width:830px){
+    .hero{
+      grid-template-columns:1fr;
+      text-align:center;
+      padding-top:10px
+    }
+
+    nav a{
+      margin-left:10px;
+      font-size:13px
+    }
+
+    .hero-left h1{
+      font-size:32px;
+      line-height:1.15
+    }
+
+    .hero-left p{
+      font-size:15px;
+      margin-bottom:18px
+    }
+
+    .card{
+      padding:18px
+    }
+
+    .container{
+      padding:18px
+    }
+  }
+
+  @media(max-width:480px){
+    .hero-left h1{font-size:28px}
+    .btn{padding:14px;font-size:15px}
+    .input{padding:12px;font-size:15px}
+    header{flex-direction:column;gap:10px}
+    nav{display:flex;gap:10px}
+    nav a{margin:0;font-size:12px}
+  }
 </style>
 </head>
 <body>
@@ -48,7 +176,6 @@
     <div style="margin-top:18px" class="muted"><strong>Price:</strong> GHS 25 per voucher · <strong>SMS delivery</strong></div>
   </div>
 
-  <!-- WASSCE PURCHASE CARD -->
   <div class="hero-right card">
     <h3>Purchase WASSCE Voucher</h3>
     <div class="muted" style="font-size:13px;margin-bottom:12px">Enter your details — we send the voucher by SMS.</div>
@@ -67,7 +194,6 @@
   </div>
 </section>
 
-<!-- BECE SECTION -->
 <section class="card" style="margin-top:40px">
   <h2>Purchase BECE Voucher</h2>
   <p class="muted">Buy BECE checker voucher — delivered instantly via SMS.</p>
@@ -104,8 +230,8 @@
 </div>
 
 <script>
-const BACKEND = "https://waecghcardsonline-backend.onrender.com";
-const PAYSTACK_PUBLIC_KEY = "pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
+const BACKEND="https://waecghcardsonline-backend.onrender.com";
+const PAYSTACK_PUBLIC_KEY="pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
 
 function showMsg(el,text,isError=false){
   el.textContent=text;
@@ -115,11 +241,14 @@ function showMsg(el,text,isError=false){
 function startPayment(e,type){
   e.preventDefault();
 
-  const name  = document.getElementById(type==='WASSCE'?'name_w':'name_b').value.trim();
+  const name = document.getElementById(type==='WASSCE'?'name_w':'name_b').value.trim();
   const phone = document.getElementById(type==='WASSCE'?'phone_w':'phone_b').value.trim();
-  const msg   = document.getElementById(type==='WASSCE'?'msg_w':'msg_b');
+  const msg = document.getElementById(type==='WASSCE'?'msg_w':'msg_b');
 
-  if(!name || !phone){ showMsg(msg,"Please enter name and phone",true); return }
+  if(!name || !phone){
+    showMsg(msg,"Please enter name and phone",true);
+    return;
+  }
 
   const email = `${phone}@autovoucher.com`;
   const amount = 25 * 100;
@@ -128,35 +257,35 @@ function startPayment(e,type){
     key: PAYSTACK_PUBLIC_KEY,
     email, amount, currency:"GHS",
 
-    metadata: {
-      purchaseType: type,   // ✔ REQUIRED — your backend reads this
-      phone: phone
+    metadata:{
+      purchaseType:type,
+      phone:phone
     },
 
-    callback: function(response){
+    callback:function(response){
       showMsg(msg,"Verifying payment...");
 
-      fetch(`${BACKEND}/verify-payment`, {
+      fetch(`${BACKEND}/verify-payment`,{
         method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({
-          reference: response.reference
+        body:JSON.stringify({
+          reference:response.reference
         })
       })
       .then(r=>r.json())
       .then(data=>{
         if(data && data.success){
           const serial = data.serial;
-          const pin    = data.pin;
+          const pin = data.pin;
           window.location.href=`/success.html?serial=${serial}&pin=${pin}`;
         } else {
-          showMsg(msg, data.message || "Delivery pending… Please wait 20 seconds.", true);
+          showMsg(msg, data.message || "Delivery pending… Please wait 20 seconds.",true);
         }
       })
       .catch(()=> showMsg(msg,"Server error verifying payment",true));
     },
 
-    onClose: function(){
+    onClose:function(){
       showMsg(msg,"Payment cancelled",true);
     }
   });
