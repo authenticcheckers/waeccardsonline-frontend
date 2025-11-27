@@ -9,9 +9,8 @@
 
 <style>
   /* ------------------------------
-      MOBILE‑OPTIMIZED UI + SMOOTHER ANIMATIONS
+      MOBILE-OPTIMIZED UI + SMOOTHER ANIMATIONS
      ------------------------------ */
-
   :root{
     --primary:#1d4ed8;
     --primary-light:#3b82f6;
@@ -100,6 +99,13 @@
     box-shadow:0 0 0 2px rgba(59,130,246,0.15);
   }
 
+  .small{
+    font-size:13px;color:var(--muted)
+  }
+
+  .voucher-list{margin-top:12px;border-radius:8px;padding:12px;background:#f1f5f9;border:1px solid var(--border)}
+  .voucher-item{padding:8px 10px;border-radius:6px;background:white;margin-bottom:8px;border:1px solid var(--border);font-family:monospace}
+
   footer{text-align:center;color:var(--muted);padding:28px 0;margin-top:40px}
 
   /* MOBILE OPTIMIZATION */
@@ -135,6 +141,7 @@
   <nav>
     <a href="#how">How it works</a>
     <a href="#faq">FAQ</a>
+    <a href="#retrieve">Retrieve</a>
     <a href="#buy">Buy Now</a>
   </nav>
 </header>
@@ -157,10 +164,21 @@
 
       <label>Phone number</label>
       <input id="phone_w" class="input" placeholder="0244123456" pattern="[0-9]+" required />
-      <div style="color:var(--muted);font-size:13px">Use a Ghanaian number (e.g. 0244123456)</div>
+      <div class="small">Use a Ghanaian number (e.g. 0244123456)</div>
 
-      <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS 25</button>
+      <label style="margin-top:12px">Quantity</label>
+      <select id="qty_w" class="input" style="width:120px;">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+
+      <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_w">25</span></button>
       <div id="msg_w" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
+
+      <div id="vouchers_w" class="voucher-list" style="display:none"></div>
     </form>
   </div>
 </section>
@@ -175,19 +193,43 @@
 
     <label>Phone number</label>
     <input id="phone_b" class="input" placeholder="0244123456" pattern="[0-9]+" required />
-    <div style="color:var(--muted);font-size:13px">Use a Ghanaian number (e.g. 0244123456)</div>
+    <div class="small">Use a Ghanaian number (e.g. 0244123456)</div>
 
-    <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS 25</button>
+    <label style="margin-top:12px">Quantity</label>
+    <select id="qty_b" class="input" style="width:120px;">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
+    <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_b">25</span></button>
     <div id="msg_b" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
+
+    <div id="vouchers_b" class="voucher-list" style="display:none"></div>
   </form>
+</section>
+
+<section id="retrieve" class="card" style="margin-top:28px">
+  <h3>Retrieve Purchased Vouchers</h3>
+  <div style="font-size:14px;color:var(--muted);margin-bottom:12px">Enter the phone number or email you used to buy vouchers.</div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input id="retrieve_input" class="input" placeholder="0244123456 or example@domain.com" style="flex:1;min-width:220px"/>
+    <button class="btn" onclick="retrieveVouchers()" style="width:auto;padding:12px 16px">Retrieve</button>
+  </div>
+
+  <div id="retrieve_msg" style="margin-top:12px;color:var(--muted)"></div>
+  <div id="retrieve_list" class="voucher-list" style="display:none"></div>
 </section>
 
 <section id="how" class="card" style="margin-top:28px">
   <h3>How it works</h3>
   <ol style="color:var(--muted);margin-top:10px;padding-left:20px">
     <li>Fill details and complete payment via Paystack.</li>
-    <li>We verify payment and reserve an unused voucher.</li>
-    <li>Voucher is sent instantly to your phone via SMS.</li>
+    <li>We verify payment and reserve unused voucher(s).</li>
+    <li>Voucher(s) are sent instantly to your phone via SMS and shown here.</li>
   </ol>
 </section>
 
@@ -204,36 +246,76 @@
 <script>
 const BACKEND="https://waecghcardsonline-backend.onrender.com";
 const PAYSTACK_PUBLIC_KEY="pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
+const PRICE_PER_VOUCHER_GHS = 25;
 
 function showMsg(el,text,isError=false){
   el.textContent=text;
   el.style.color=isError?'#dc2626':'#16a34a';
 }
 
+function renderVoucherList(container, vouchers){
+  if(!vouchers || vouchers.length === 0){
+    container.style.display = 'none';
+    return;
+  }
+  container.innerHTML = '';
+  vouchers.forEach(v => {
+    const d = document.createElement('div');
+    d.className = 'voucher-item';
+    d.textContent = `${v.type || ''} — ${v.serial} | ${v.pin} ${v.date?(' — '+new Date(v.date).toLocaleString()):''}`;
+    container.appendChild(d);
+  });
+  container.style.display = 'block';
+}
+
+// update displayed price when qty changes
+function updatePriceIndicators(){
+  const qtyW = Number(document.getElementById('qty_w').value || 1);
+  const qtyB = Number(document.getElementById('qty_b').value || 1);
+  document.getElementById('price_w').textContent = PRICE_PER_VOUCHER_GHS * qtyW;
+  document.getElementById('price_b').textContent = PRICE_PER_VOUCHER_GHS * qtyB;
+}
+document.getElementById('qty_w').addEventListener('change', updatePriceIndicators);
+document.getElementById('qty_b').addEventListener('change', updatePriceIndicators);
+updatePriceIndicators();
+
 function startPayment(e,type){
   e.preventDefault();
 
-  const name = document.getElementById(type==='WASSCE'?'name_w':'name_b').value.trim();
-  const phone = document.getElementById(type==='WASSCE'?'phone_w':'phone_b').value.trim();
+  const nameEl = document.getElementById(type==='WASSCE'?'name_w':'name_b');
+  const phoneEl = document.getElementById(type==='WASSCE'?'phone_w':'phone_b');
+  const qtyEl = document.getElementById(type==='WASSCE'?'qty_w':'qty_b');
   const msg = document.getElementById(type==='WASSCE'?'msg_w':'msg_b');
+  const vouchersContainer = document.getElementById(type==='WASSCE'?'vouchers_w':'vouchers_b');
+
+  const name = nameEl.value.trim();
+  const phone = phoneEl.value.trim();
+  const quantity = Number(qtyEl.value || 1);
 
   if(!name || !phone){
     showMsg(msg,"Please enter name and phone",true);
     return;
   }
 
-  const email = `${phone}@autovoucher.com`;
-  const amount = 25 * 100;
+  // construct a pseudo-email for Paystack (if you don't collect real emails)
+  const email = (phone.includes('@') || phone.includes('.')) ? phone : `${phone}@autovoucher.com`;
+
+  const amount = PRICE_PER_VOUCHER_GHS * quantity * 100; // in pesewas
 
   const handler = PaystackPop.setup({
     key: PAYSTACK_PUBLIC_KEY,
-    email, amount, currency:"GHS",
-
-    metadata:{ purchaseType:type, phone:phone },
-
+    email,
+    amount,
+    currency:"GHS",
+    metadata:{
+      voucher_type: type,
+      phone,
+      name,
+      quantity
+    },
     callback:function(response){
       showMsg(msg,"Verifying payment...");
-
+      vouchersContainer.style.display = 'none';
       fetch(`${BACKEND}/verify-payment`,{
         method:"POST",
         headers:{ "Content-Type":"application/json" },
@@ -241,25 +323,63 @@ function startPayment(e,type){
       })
       .then(r=>r.json())
       .then(data=>{
-        if(data && data.success){
-          const serial = data.serial;
-          const pin = data.pin;
-          window.location.href=`/success.html?serial=${serial}&pin=${pin}`;
+        if(data && data.success && Array.isArray(data.vouchers) && data.vouchers.length>0){
+          // show list of vouchers to the user inline
+          renderVoucherList(vouchersContainer, data.vouchers);
+          showMsg(msg, `Payment verified — ${data.vouchers.length} voucher(s) delivered.`);
+        } else if (data && data.success && !data.vouchers){
+          showMsg(msg, "Payment verified. No voucher delivered yet. Try again in a few seconds.");
         } else {
-          showMsg(msg, data.message || "Delivery pending… Please wait 20 seconds.",true);
+          showMsg(msg, data.message || "Delivery pending… Please wait 20 seconds.", true);
         }
       })
-      .catch(()=> showMsg(msg,"Server error verifying payment",true));
+      .catch((err)=> {
+        console.error(err);
+        showMsg(msg,"Server error verifying payment",true);
+      });
     },
 
-    onClose:function(){ showMsg(msg,"Payment cancelled",true); }
+    onClose:function(){
+      showMsg(msg,"Payment cancelled",true);
+    }
   });
 
   handler.openIframe();
+}
+
+async function retrieveVouchers(){
+  const input = document.getElementById('retrieve_input').value.trim();
+  const msg = document.getElementById('retrieve_msg');
+  const list = document.getElementById('retrieve_list');
+
+  if(!input){
+    showMsg(msg, "Please enter phone or email", true);
+    return;
+  }
+  showMsg(msg, "Searching...");
+  list.style.display = 'none';
+  list.innerHTML = '';
+
+  // decide whether input looks like phone or email
+  let url = `${BACKEND}/retrieve-vouchers?`;
+  if(input.includes('@')) url += `email=${encodeURIComponent(input)}`;
+  else url += `phone=${encodeURIComponent(input)}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data && data.success && Array.isArray(data.vouchers) && data.vouchers.length > 0){
+      renderVoucherList(list, data.vouchers);
+      showMsg(msg, `Found ${data.vouchers.length} voucher(s).`);
+    } else {
+      showMsg(msg, "No vouchers found for that phone/email.", true);
+    }
+  } catch (err){
+    console.error(err);
+    showMsg(msg, "Server error retrieving vouchers", true);
+  }
 }
 </script>
 
 </body>
 </html>
-
-
