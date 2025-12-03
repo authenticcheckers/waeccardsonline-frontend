@@ -94,6 +94,38 @@
       <option value="BECE">BECE</option>
     </select>
     <button onclick="addVoucherHandler()">Upload Voucher</button>
+<h2>Upload Checker CSV</h2>
+
+<form id="csvForm" enctype="multipart/form-data">
+  <input type="file" id="csvFile" accept=".csv" />
+  <button type="button" onclick="uploadCSV()">Upload CSV</button>
+</form>
+
+<p id="msg"></p>
+
+<script>
+async function uploadCSV() {
+  const file = document.getElementById("csvFile").files[0];
+  const msg = document.getElementById("msg");
+
+  if (!file) {
+    msg.innerText = "Please choose a file first.";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("https://your-render-url.com/upload-checkers-csv", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await response.json();
+
+  msg.innerText = "Uploaded: " + data.inserted + " checkers added.";
+}
+</script>
 
  
 <!-- Vouchers Table -->
