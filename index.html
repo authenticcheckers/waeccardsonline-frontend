@@ -151,7 +151,7 @@
     <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--primary)">Instantly</span></h1>
     <p>Secure, fast delivery. Receive your voucher instantly after payment.</p>
     <button class="btn" onclick="document.getElementById('wassceForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
-    <div style="margin-top:16px;color:var(--muted)"><strong>Price:</strong> GHS 25 per voucher</div>
+    <div style="margin-top:16px;color:var(--muted)"><strong>Price:</strong> GHS 30 per voucher</div>
   </div>
 
   <div class="hero-right card">
@@ -201,7 +201,7 @@
 
       </select>
 
-      <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_w">25</span></button>
+      <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_w">30</span></button>
       <div id="msg_w" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
 
       <div id="vouchers_w" class="voucher-list" style="display:none"></div>
@@ -256,7 +256,7 @@
 
     </select>
 
-    <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_b">25</span></button>
+    <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_b">30</span></button>
     <div id="msg_b" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
 
     <div id="vouchers_b" class="voucher-list" style="display:none"></div>
@@ -298,7 +298,7 @@
 <script>
 const BACKEND="https://waecghcardsonline-backend.onrender.com";
 const PAYSTACK_PUBLIC_KEY="pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
-const PRICE_PER_VOUCHER_GHS = 25;
+const PRICE_PER_VOUCHER_GHS = 30;
 
 function showMsg(el,text,isError=false){
   el.textContent=text;
