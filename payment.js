@@ -21,7 +21,7 @@ function startPayment() {
     let handler = PaystackPop.setup({
         key: PAYSTACK_PUBLIC_KEY,
         email: email,
-        amount: 25 * 100,
+        amount: 30 * 100,
         currency: "GHS",
 
         metadata: {
