@@ -1,175 +1,391 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Authentic Checkers — Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Admin</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    html, body {
-      overflow-x: hidden;
-      width: 100%;
+    :root {
+      --bg-light: #f4f7fc;
+      --glass-white: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --primary: #4f46e5; /* Deep Indigo */
+      --accent: #06b6d4;  /* Cyan */
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.15);
     }
 
-    * {
-      box-sizing: border-box;
-      max-width: 100%;
-    }
-    
-    body { font-family: Inter, system-ui, sans-serif; background:#f5f6fa; margin:0; }
-    .card { background:#fff; padding:20px; margin:20px auto; max-width:900px;
-            border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.05); }
-    input, select { width:100%; padding:10px; margin-top:8px;
-                    border-radius:8px; border:1px solid #ddd; }
-    button { background:#2d6df6; color:white; border:none; 
-             padding:10px 16px; margin-top:10px; border-radius:8px; cursor:pointer; }
-    table { width:100%; border-collapse:collapse; margin-top:15px; }
-    th, td { padding:10px; border-bottom:1px solid #eee; font-size:14px; }
+    * { box-sizing: border-box; outline: none; }
 
-    /* MOBILE OPTIMIZATION */
-    input, button, select {
-      width: 100%;
-      font-size: 16px;
-      padding: 12px;
+    body {
+      margin: 0;
+      background: var(--bg-light);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.1) 0px, transparent 50%);
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
     }
 
-    .container {
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.5px; }
+
+    /* GLASS CARDS */
+    .card {
+      background: var(--glass-white);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid #fff;
+      padding: 32px;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
       width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
+      max-width: 950px;
+      margin-bottom: 24px;
+      transition: transform 0.2s;
+    }
+
+    .login-card { max-width: 420px; margin-top: 10vh; text-align: center; }
+
+    /* INPUTS */
+    input, select {
+      width: 100%;
+      background: #fff;
+      border: 2px solid #e2e8f0;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: var(--text-dark);
+      transition: 0.3s;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+
+    /* BUTTONS */
+    button {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
       padding: 16px;
-      overflow-x: hidden;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      transition: 0.3s;
     }
 
-    .table-wrapper {
-      width: 100%;
+    button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); }
+
+    button.secondary-btn {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      box-shadow: none;
+    }
+
+    button.secondary-btn:hover { background: #f0fdfa; }
+
+    /* FILE UPLOAD ZONE */
+    .upload-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      background: rgba(255,255,255,0.5);
+      margin-bottom: 20px;
+    }
+
+    /* TABLES */
+    .table-container {
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
-    table {
-      width: 100%;
-      min-width: 600px;
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    
+    th {
+      background: #f8fafc;
+      text-align: left;
+      padding: 18px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
     }
 
-    td, th {
-      word-wrap: break-word;
-      white-space: normal;
+    td {
+      padding: 16px 18px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.95rem;
     }
 
-    body * {
-      max-width: 100vw !important;
+    /* BADGES */
+    .badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
     }
+    .badge-active { background: #ecfdf5; color: var(--success); }
+    .badge-used { background: #fef2f2; color: var(--danger); }
+
+    .hidden { display: none; }
+    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .form-row > * { flex: 1; min-width: 150px; margin-bottom: 0; }
   </style>
 </head>
 <body>
 
-  <!-- ============================= -->
-  <!-- LOGIN SECTION -->
-  <!-- ============================= -->
-  <div id="loginSection" class="card">
-    <h2>Admin Login</h2>
-
-    <label>Username</label>
-    <input id="username" type="text" placeholder="Enter username">
-
-    <label>Password</label>
-    <input id="password" type="password" placeholder="Enter password">
-
-    <button onclick="doLogin()">Login</button>
+  <div id="loginSection" class="card login-card">
+    <h2 style="color:var(--primary); margin-bottom:5px;">AURA CONTROL</h2>
+    <p style="color:var(--text-muted); margin-bottom:30px; font-size:0.9rem;">Secure Authentication Required</p>
+    
+    <input id="username" type="text" placeholder="Operator ID">
+    <input id="password" type="password" placeholder="Access Key">
+    <button onclick="doLogin()">Initialize Session</button>
   </div>
 
-  <!-- ============================= -->
-  <!-- DASHBOARD -->
-  <!-- ============================= -->
-  <div id="dashboard" class="card" style="display:none;">
-    <h2>Dashboard</h2>
-
-    <!-- Add Voucher -->
-    <h3>Add Voucher</h3>
-    <input id="newSerial" placeholder="Serial">
-    <input id="newPin" placeholder="Pin">
-    <select id="newType">
-      <option value="WASSCE">WASSCE</option>
-      <option value="BECE">BECE</option>
-    </select>
-    <button onclick="addVoucherHandler()">Upload Voucher</button>
-<h2>Upload Checker CSV</h2>
-
-<form id="csvForm" enctype="multipart/form-data">
-  <input type="file" id="csvFile" accept=".csv" />
-  <button type="button" onclick="uploadCSV()">Upload CSV</button>
-</form>
-
-<p id="msg"></p>
-
-<script>
-async function uploadCSV() {
-  const file = document.getElementById("csvFile").files[0];
-  const msg = document.getElementById("msg");
-
-  if (!file) {
-    msg.innerText = "Please choose a file first.";
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch("https://your-render-url.com/upload-checkers-csv", {
-    method: "POST",
-    body: formData
-  });
-
-  const data = await response.json();
-
-  msg.innerText = "Uploaded: " + data.inserted + " checkers added.";
-}
-</script>
-
- 
-<!-- Vouchers Table -->
-<h3 style="margin-top:30px;">Vouchers</h3>
-<div class="table-wrapper">
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Serial</th>
-        <th>Pin</th>
-        <th>Type</th>
-        <th>Status</th>
-        <th>Action</th> <!-- NEW -->
-        <td>
-  <button onclick="markAsUsed('${v.serial}')">Mark Used</button>
-</td>
-      </tr>
-    </thead>
-    <tbody id="voucherTable"></tbody>
-  </table>
-</div>
-
-
-    <!-- Sales Table -->
-    <h3 style="margin-top:30px;">Sales</h3>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Voucher Serial</th>
-            <th>Voucher Pin</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody id="salesTable"></tbody>
-      </table>
+  <div id="dashboard" class="hidden" style="width: 100%; max-width: 1000px;">
+    
+    <div class="header-flex">
+      <h1 style="margin:0;">Dashboard <span style="color:var(--accent); font-size:0.6em; vertical-align:middle;">● LIVE</span></h1>
+      <button onclick="logout()" class="secondary-btn" style="width: auto; padding: 10px 24px; font-size:0.9rem;">Disconnect</button>
     </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Bulk Data Import</h3>
+      <div class="upload-zone">
+        <input type="file" id="csvFile" accept=".csv" style="border:none; padding:0; background:transparent; margin:0;">
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Required Columns: Serial, PIN, Type</p>
+      </div>
+      <div class="header-flex" style="margin-bottom:0;">
+        <span id="msg" style="font-weight:500; font-size:0.9rem;"></span>
+        <button onclick="uploadCSV()" style="width:auto; padding:12px 30px;">Start Upload</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Manual Entry</h3>
+      <div class="form-row">
+        <input id="newSerial" placeholder="Serial Number">
+        <input id="newPin" placeholder="PIN Code">
+        <select id="newType">
+          <option value="WASSCE">WASSCE</option>
+          <option value="BECE">BECE</option>
+          <option value="NOVDEC">NOVDEC</option>
+        </select>
+        <button onclick="addVoucherHandler()" class="secondary-btn">Add Record</button>
+      </div>
+    </div>
+
+    <div class="card" style="background:transparent; backdrop-filter:none; border:none; box-shadow:none; padding:0;">
+      <h3 style="margin-left:10px;">Voucher Inventory</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Serial</th>
+              <th>PIN</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="voucherTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="background:transparent; backdrop-filter:none; border:none; box-shadow:none; padding:0;">
+      <h3 style="margin-left:10px; margin-top:30px;">Recent Sales</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Contact</th>
+              <th>Voucher Sent</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody id="salesTable"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
-  <script src="admin.js"></script>
+  <script>
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    const API_BASE = "https://waecghcardsonline-backend.onrender.com"; 
+
+    if(localStorage.getItem('adminAuth') === 'true') showDashboard();
+
+    async function doLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) return alert("Credentials missing");
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('adminAuth', 'true');
+          showDashboard();
+        } else {
+          alert("Access Denied");
+        }
+      } catch (err) { alert("Network Error"); }
+    }
+
+    function showDashboard() {
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        loadVouchers();
+        loadSales();
+    }
+
+    function logout() {
+        localStorage.removeItem('adminAuth');
+        location.reload();
+    }
+
+    // --- UPLOAD CSV ---
+    async function uploadCSV() {
+      const fileInput = document.getElementById("csvFile");
+      const msg = document.getElementById("msg");
+      
+      if (!fileInput.files[0]) {
+        msg.innerHTML = "<span style='color:var(--danger)'>Please select a CSV file first.</span>";
+        return;
+      }
+
+      msg.innerHTML = "<span style='color:var(--primary)'>Processing data stream...</span>";
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      try {
+        const response = await fetch(`${API_BASE}/upload-checkers-csv`, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+           msg.innerHTML = `<span style='color:var(--success)'>Success: ${data.inserted} vouchers uploaded.</span>`;
+           loadVouchers();
+           fileInput.value = "";
+        } else {
+           msg.innerHTML = `<span style='color:var(--danger)'>Error: ${data.error}</span>`;
+        }
+      } catch(err) {
+         msg.innerHTML = "<span style='color:var(--danger)'>Server connection failed.</span>";
+      }
+    }
+
+    // --- LOAD DATA ---
+    async function loadVouchers() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/vouchers`);
+        const data = await res.json();
+        const tbody = document.getElementById("voucherTable");
+        tbody.innerHTML = "";
+        
+        data.data.forEach((v, i) => {
+          const badgeClass = v.used ? "badge-used" : "badge-active";
+          const badgeText = v.used ? "Sold" : "Available";
+          
+          tbody.innerHTML += `
+            <tr>
+              <td>${i + 1}</td>
+              <td style="font-family:'Space Grotesk'">${v.serial}</td>
+              <td style="font-family:'Space Grotesk'">••••${v.pin.slice(-4)}</td>
+              <td>${v.type}</td>
+              <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+              <td>${!v.used ? '<button class="secondary-btn" style="padding:6px 12px; font-size:0.75rem; width:auto;">Void</button>' : '-'}</td>
+            </tr>
+          `;
+        });
+      } catch(e) { console.error(e); }
+    }
+
+    async function loadSales() {
+       try {
+        const res = await fetch(`${API_BASE}/admin/sales`);
+        const data = await res.json();
+        const tbody = document.getElementById("salesTable");
+        tbody.innerHTML = "";
+
+        data.data.forEach(s => {
+             const dateStr = new Date(s.date).toLocaleDateString();
+             tbody.innerHTML += `
+                <tr>
+                    <td>${dateStr}</td>
+                    <td>${s.name}</td>
+                    <td>${s.phone}</td>
+                    <td style="font-family:'Space Grotesk'">${s.voucher_serial}</td>
+                    <td>${s.type}</td>
+                </tr>
+             `;
+        });
+       } catch(e) { console.error(e); }
+    }
+
+    async function addVoucherHandler() {
+        const serial = document.getElementById("newSerial").value;
+        const pin = document.getElementById("newPin").value;
+        const type = document.getElementById("newType").value;
+
+        if(!serial || !pin) return alert("Fill all fields");
+
+        try {
+             const res = await fetch(`${API_BASE}/admin/upload`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ vouchers: [{serial, pin, type}] })
+             });
+             if(res.ok) {
+                 alert("Saved.");
+                 loadVouchers();
+                 document.getElementById("newSerial").value = "";
+                 document.getElementById("newPin").value = "";
+             }
+        } catch(e) { alert("Error"); }
+    }
+  </script>
 </body>
 </html>
