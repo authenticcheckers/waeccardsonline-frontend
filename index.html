@@ -5,123 +5,106 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>waeccardsonline — Instant WASSCE & BECE Voucher Delivery</title>
 <meta name="description" content="Buy authentic WASSCE and BECE checker vouchers. Instant SMS delivery." />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <style>
   /* ------------------------------
-      MOBILE-OPTIMIZED UI + SMOOTHER ANIMATIONS
+     BRIGHT FUTURISTIC AURA STYLING
      ------------------------------ */
-  :root{
-    --primary:#1d4ed8;
-    --primary-light:#3b82f6;
-    --text:#1e293b;
-    --muted:#64748b;
-    --border:#e2e8f0;
-    --bg:#f8fafc;
-    --card-bg:#ffffff;
+  :root {
+    --primary: #4f46e5;
+    --accent: #06b6d4;
+    --text: #1e293b;
+    --muted: #64748b;
+    --bg: #f4f7fc;
+    --glass: rgba(255, 255, 255, 0.7);
+    --border: rgba(255, 255, 255, 0.9);
+    --shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.15);
   }
 
-  *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
 
-  body{
-    background:var(--bg);
-    color:var(--text);
-    line-height:1.55;
-    animation:fadeIn .55s ease;
-    -webkit-tap-highlight-color:transparent;
+  body {
+    background: var(--bg);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.15) 0px, transparent 50%);
+    color: var(--text);
+    line-height: 1.6;
+    animation: fadeIn 0.8s ease;
   }
 
-  /* ANIMATIONS */
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes slideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes popIn{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
-  @keyframes softGlow{0%{box-shadow:0 0 0 rgba(0,0,0,0)}100%{box-shadow:0 8px 25px rgba(29,78,216,.15)}}
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  .container{
-    max-width:1100px;margin:0 auto;padding:22px;
-    animation:slideUp .55s ease;
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+
+  .brand { display: flex; align-items: center; gap: 12px; }
+
+  .logo {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 20px; font-family: 'Space Grotesk';
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
   }
 
-  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;animation:fadeIn .7s ease}
+  nav a {
+    margin-left: 20px; color: var(--muted); font-weight: 600; font-size: 15px; text-decoration: none;
+    transition: 0.3s;
+  }
+  nav a:hover { color: var(--primary); }
 
-  .brand{display:flex;align-items:center;gap:12px}
+  .hero { display: grid; grid-template-columns: 1fr 420px; gap: 30px; margin-top: 20px; align-items: flex-start; }
 
-  .logo{
-    width:46px;height:46px;border-radius:10px;
-    background:var(--primary);
-    display:flex;align-items:center;justify-content:center;
-    color:#fff;font-weight:700;font-size:20px;
-    animation:popIn .5s ease;
+  .hero-left h1 { 
+    font-family: 'Space Grotesk'; font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 15px; 
+    letter-spacing: -1px;
   }
 
-  nav a{
-    margin-left:18px;color:var(--muted);font-weight:600;font-size:15px;text-decoration:none;
-    transition:.22s ease;
+  .btn {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white; padding: 16px; border: none; border-radius: 14px;
+    font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.2);
   }
-  nav a:hover{color:var(--primary);transform:translateY(-2px)}
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(79, 70, 229, 0.3); }
 
-  /* HERO */
-  .hero{
-    display:grid;grid-template-columns:1fr 420px;gap:26px;margin-top:18px;align-items:flex-start;
-    animation:slideUp .6s ease;
-  }
-
-  .hero-left h1{font-size:38px;font-weight:800;margin-bottom:12px;animation:slideUp .75s ease}
-
-  .hero-left p{font-size:16px;color:var(--muted);margin-bottom:20px}
-
-  .btn{
-    background:var(--primary);
-    color:white;padding:14px 18px;border:none;border-radius:11px;
-    font-weight:600;cursor:pointer;font-size:16px;transition:0.2s ease;
-    animation:fadeIn .9s ease;
-    width:100%;
-  }
-  .btn:hover{background:var(--primary-light);transform:translateY(-2px)}
-  .btn:active{transform:scale(.97)}
-
-  .card{
-    background:var(--card-bg);
-    border:1px solid var(--border);
-    padding:22px;border-radius:14px;
-    box-shadow:0 1px 4px rgba(0,0,0,0.06);
-    animation:slideUp .75s ease;
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid #fff;
+    padding: 25px; border-radius: 24px;
+    box-shadow: var(--shadow);
   }
 
-  label{display:block;margin-top:16px;margin-bottom:6px;font-weight:600;color:var(--text)}
+  label { display: block; margin-top: 18px; margin-bottom: 6px; font-weight: 700; font-size: 14px; color: var(--primary); }
 
-  .input{
-    width:100%;padding:14px;border-radius:8px;border:1px solid var(--border);
-    background:#fff;font-size:15px;transition:.15s;
+  .input {
+    width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0;
+    background: #fff; font-size: 15px; transition: 0.3s;
   }
-  .input:focus{
-    outline:none;border-color:var(--primary-light);
-    box-shadow:0 0 0 2px rgba(59,130,246,0.15);
+  .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+  .small { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+  .voucher-list { 
+    margin-top: 15px; border-radius: 16px; padding: 15px; 
+    background: rgba(255,255,255,0.5); border: 1px dashed var(--primary); 
+  }
+  .voucher-item { 
+    padding: 10px; border-radius: 8px; background: white; margin-bottom: 8px; 
+    border: 1px solid #e2e8f0; font-family: 'Space Grotesk', monospace; font-size: 14px;
   }
 
-  .small{
-    font-size:13px;color:var(--muted)
-  }
+  footer { text-align: center; color: var(--muted); padding: 40px 0; font-weight: 500; }
 
-  .voucher-list{margin-top:12px;border-radius:8px;padding:12px;background:#f1f5f9;border:1px solid var(--border)}
-  .voucher-item{padding:8px 10px;border-radius:6px;background:white;margin-bottom:8px;border:1px solid var(--border);font-family:monospace}
-
-  footer{text-align:center;color:var(--muted);padding:28px 0;margin-top:40px}
-
-  /* MOBILE OPTIMIZATION */
   @media(max-width:900px){
-    .hero{grid-template-columns:1fr}
-    nav a{margin-left:14px}
-    .hero-left h1{font-size:32px;line-height:1.25}
-    .container{padding:18px}
-  }
-
-  @media(max-width:480px){
-    header{flex-direction:column;gap:14px;text-align:center}
-    nav a{font-size:14px;margin-left:6px}
-    .hero-left h1{font-size:28px}
-    .btn{font-size:15px;padding:12px}
-    .card{padding:18px}
+    .hero { grid-template-columns: 1fr; }
+    .hero-left h1 { font-size: 34px; }
   }
 </style>
 </head>
@@ -150,7 +133,7 @@
   <div class="hero-left">
     <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--primary)">Instantly</span></h1>
     <p>Secure, fast delivery. Receive your voucher instantly after payment.</p>
-    <button class="btn" onclick="document.getElementById('wassceForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
+    <button class="btn" style="margin-top:20px; width:auto; padding: 16px 40px;" onclick="document.getElementById('wassceForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
     <div style="margin-top:16px;color:var(--muted)"><strong>Price:</strong> GHS 30 per voucher</div>
   </div>
 
@@ -269,7 +252,7 @@
 
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <input id="retrieve_input" class="input" placeholder="0244123456 or example@domain.com" style="flex:1;min-width:220px"/>
-    <button class="btn" onclick="retrieveVouchers()" style="width:auto;padding:12px 16px">Retrieve</button>
+    <button class="btn" onclick="retrieveVouchers()" style="width:auto;padding:12px 25px">Retrieve</button>
   </div>
 
   <div id="retrieve_msg" style="margin-top:12px;color:var(--muted)"></div>
