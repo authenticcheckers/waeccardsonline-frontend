@@ -376,7 +376,26 @@
         });
        } catch(e) { console.error(e); }
     }
+async function voidVoucher(id) {
+    if (!confirm("Mark this voucher as USED? It will no longer be available for sale.")) return;
 
+    try {
+        const res = await fetch(`${API_BASE}/admin/voucher/void/${id}`, {
+            method: "PUT", // Changed to PUT for updating
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            loadVouchers(); // Refresh the table to show 'Sold/Used' status
+        } else {
+            alert(data.message || "Failed to update voucher");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Network error occurred");
+    }
+}
     async function addVoucherHandler() {
         const serial = document.getElementById("newSerial").value;
         const pin = document.getElementById("newPin").value;
