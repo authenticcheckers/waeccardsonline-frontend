@@ -348,7 +348,11 @@
               <td style="font-family:'Space Grotesk'">••••${v.pin.slice(-4)}</td>
               <td>${v.type}</td>
               <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-              <td>${!v.used ? '<button class="secondary-btn" style="padding:6px 12px; font-size:0.75rem; width:auto;">Void</button>' : '-'}</td>
+              <td>
+                ${!v.used 
+                  ? `<button onclick="voidVoucher(${v.id})" class="secondary-btn" style="padding:6px 12px; font-size:0.75rem; width:auto; border-color:var(--danger); color:var(--danger);">Void</button>` 
+                  : '-'}
+              </td>
             </tr>
           `;
         });
