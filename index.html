@@ -6,7 +6,6 @@
 <title>waeccardsonline — Instant WASSCE & BECE Voucher Delivery</title>
 <meta name="description" content="Buy authentic WASSCE and BECE checker vouchers. Instant SMS delivery." />
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://js.paystack.co/v1/inline.js"></script>
 
 <style>
   /* ------------------------------
@@ -27,7 +26,7 @@
 
   body {
     background: var(--bg);
-    background-image: 
+    background-image:
       radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
       radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.15) 0px, transparent 50%);
     color: var(--text);
@@ -57,10 +56,10 @@
   }
   nav a:hover { color: var(--primary); }
 
-  .hero { display: grid; grid-template-columns: 1fr 420px; gap: 30px; margin-top: 20px; align-items: flex-start; }
+  .hero { display: grid; grid-template-columns: 1fr 440px; gap: 30px; margin-top: 20px; align-items: flex-start; }
 
-  .hero-left h1 { 
-    font-family: 'Space Grotesk'; font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 15px; 
+  .hero-left h1 {
+    font-family: 'Space Grotesk'; font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 15px;
     letter-spacing: -1px;
   }
 
@@ -71,6 +70,7 @@
     box-shadow: 0 8px 20px rgba(79, 70, 229, 0.2);
   }
   .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(79, 70, 229, 0.3); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
   .card {
     background: var(--glass);
@@ -91,14 +91,18 @@
 
   .small { font-size: 13px; color: var(--muted); margin-top: 5px; }
 
-  .voucher-list { 
-    margin-top: 15px; border-radius: 16px; padding: 15px; 
-    background: rgba(255,255,255,0.5); border: 1px dashed var(--primary); 
+  .voucher-list {
+    margin-top: 15px; border-radius: 16px; padding: 15px;
+    background: rgba(255,255,255,0.5); border: 1px dashed var(--primary);
   }
-  .voucher-item { 
-    padding: 10px; border-radius: 8px; background: white; margin-bottom: 8px; 
+  .voucher-item {
+    padding: 10px; border-radius: 8px; background: white; margin-bottom: 8px;
     border: 1px solid #e2e8f0; font-family: 'Space Grotesk', monospace; font-size: 14px;
   }
+
+  /* OTP input row — hidden by default */
+  .otp-row { display: none; margin-top: 14px; }
+  .otp-row.visible { display: block; }
 
   footer { text-align: center; color: var(--muted); padding: 40px 0; font-weight: 500; }
 
@@ -132,7 +136,7 @@
 <section class="hero" id="buy">
   <div class="hero-left">
     <h1>Buy WASSCE & BECE Vouchers <span style="color:var(--primary)">Instantly</span></h1>
-    <p>Secure, fast delivery. Receive your voucher instantly after payment.</p>
+    <p>Secure, fast delivery via Mobile Money. Receive your voucher instantly after payment.</p>
     <button class="btn" style="margin-top:20px; width:auto; padding: 16px 40px;" onclick="document.getElementById('wassceForm').scrollIntoView({behavior:'smooth'})">Buy Voucher</button>
     <div style="margin-top:16px;color:var(--muted)"><strong>Price:</strong> GHS 30 per voucher</div>
   </div>
@@ -149,44 +153,36 @@
       <input id="phone_w" class="input" placeholder="0244123456" pattern="[0-9]+" required />
       <div class="small">Use a Ghanaian number (e.g. 0244123456)</div>
 
-      <label style="margin-top:12px">Quantity</label>
-      <select id="qty_w" class="input" style="width:120px;">
-  <option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6</option>
-<option value="7">7</option>
-<option value="8">8</option>
-<option value="9">9</option>
-<option value="10">10</option>
-<option value="11">11</option>
-<option value="12">12</option>
-<option value="13">13</option>
-<option value="14">14</option>
-<option value="15">15</option>
-<option value="16">16</option>
-<option value="17">17</option>
-<option value="18">18</option>
-<option value="19">19</option>
-<option value="20">20</option>
-<option value="21">21</option>
-<option value="22">22</option>
-<option value="23">23</option>
-<option value="24">24</option>
-<option value="25">25</option>
-<option value="26">26</option>
-<option value="27">27</option>
-<option value="28">28</option>
-<option value="29">29</option>
-<option value="30">30</option>
-
+      <label>Mobile Network</label>
+      <select id="network_w" class="input">
+        <option value="MTN">MTN Mobile Money</option>
+        <option value="Telecel">Telecel Cash</option>
+        <option value="AT">AT Money</option>
       </select>
 
-      <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_w">30</span></button>
-      <div id="msg_w" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
+      <label style="margin-top:12px">Quantity</label>
+      <select id="qty_w" class="input" style="width:120px;">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+        <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+        <option value="16">16</option><option value="17">17</option><option value="18">18</option>
+        <option value="19">19</option><option value="20">20</option><option value="21">21</option>
+        <option value="22">22</option><option value="23">23</option><option value="24">24</option>
+        <option value="25">25</option><option value="26">26</option><option value="27">27</option>
+        <option value="28">28</option><option value="29">29</option><option value="30">30</option>
+      </select>
 
+      <!-- OTP field — shown only when Moolre requires it -->
+      <div id="otp_row_w" class="otp-row">
+        <label>OTP Code</label>
+        <input id="otp_w" class="input" placeholder="Enter OTP sent to your phone" />
+        <div class="small">An OTP was sent to your phone. Enter it and click Pay again.</div>
+      </div>
+
+      <button id="paybtn_w" class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_w">30</span></button>
+      <div id="msg_w" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
       <div id="vouchers_w" class="voucher-list" style="display:none"></div>
     </form>
   </div>
@@ -204,54 +200,46 @@
     <input id="phone_b" class="input" placeholder="0244123456" pattern="[0-9]+" required />
     <div class="small">Use a Ghanaian number (e.g. 0244123456)</div>
 
-    <label style="margin-top:12px">Quantity</label>
-    <select id="qty_b" class="input" style="width:120px;">
-    <option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6</option>
-<option value="7">7</option>
-<option value="8">8</option>
-<option value="9">9</option>
-<option value="10">10</option>
-<option value="11">11</option>
-<option value="12">12</option>
-<option value="13">13</option>
-<option value="14">14</option>
-<option value="15">15</option>
-<option value="16">16</option>
-<option value="17">17</option>
-<option value="18">18</option>
-<option value="19">19</option>
-<option value="20">20</option>
-<option value="21">21</option>
-<option value="22">22</option>
-<option value="23">23</option>
-<option value="24">24</option>
-<option value="25">25</option>
-<option value="26">26</option>
-<option value="27">27</option>
-<option value="28">28</option>
-<option value="29">29</option>
-<option value="30">30</option>
-
+    <label>Mobile Network</label>
+    <select id="network_b" class="input">
+      <option value="MTN">MTN Mobile Money</option>
+      <option value="Telecel">Telecel Cash</option>
+      <option value="AT">AT Money</option>
     </select>
 
-    <button class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_b">30</span></button>
-    <div id="msg_b" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
+    <label style="margin-top:12px">Quantity</label>
+    <select id="qty_b" class="input" style="width:120px;">
+      <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+      <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+      <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+      <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+      <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+      <option value="16">16</option><option value="17">17</option><option value="18">18</option>
+      <option value="19">19</option><option value="20">20</option><option value="21">21</option>
+      <option value="22">22</option><option value="23">23</option><option value="24">24</option>
+      <option value="25">25</option><option value="26">26</option><option value="27">27</option>
+      <option value="28">28</option><option value="29">29</option><option value="30">30</option>
+    </select>
 
+    <!-- OTP field — shown only when Moolre requires it -->
+    <div id="otp_row_b" class="otp-row">
+      <label>OTP Code</label>
+      <input id="otp_b" class="input" placeholder="Enter OTP sent to your phone" />
+      <div class="small">An OTP was sent to your phone. Enter it and click Pay again.</div>
+    </div>
+
+    <button id="paybtn_b" class="btn" type="submit" style="margin-top:16px;width:100%">Pay GHS <span id="price_b">30</span></button>
+    <div id="msg_b" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
     <div id="vouchers_b" class="voucher-list" style="display:none"></div>
   </form>
 </section>
 
 <section id="retrieve" class="card" style="margin-top:28px">
   <h3>Retrieve Purchased Vouchers</h3>
-  <div style="font-size:14px;color:var(--muted);margin-bottom:12px">Enter the phone number or email you used to buy vouchers.</div>
+  <div style="font-size:14px;color:var(--muted);margin-bottom:12px">Enter the phone number you used to buy vouchers.</div>
 
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <input id="retrieve_input" class="input" placeholder="0244123456 or example@domain.com" style="flex:1;min-width:220px"/>
+    <input id="retrieve_input" class="input" placeholder="0244123456" style="flex:1;min-width:220px"/>
     <button class="btn" onclick="retrieveVouchers()" style="width:auto;padding:12px 25px">Retrieve</button>
   </div>
 
@@ -262,156 +250,244 @@
 <section id="how" class="card" style="margin-top:28px">
   <h3>How it works</h3>
   <ol style="color:var(--muted);margin-top:10px;padding-left:20px">
-    <li>Fill details and complete payment via Paystack.</li>
-    <li>We verify payment and reserve unused voucher(s).</li>
-    <li>Voucher(s) are sent instantly to your phone via SMS and shown here.</li>
+    <li>Fill in your name, phone number and select your network.</li>
+    <li>Click Pay — a Mobile Money prompt is sent to your phone.</li>
+    <li>Enter your MoMo PIN to approve payment.</li>
+    <li>Your voucher(s) are delivered instantly via SMS and shown here.</li>
   </ol>
 </section>
 
 <section id="faq" class="card" style="margin-top:18px">
   <h3>FAQ</h3>
   <div style="color:var(--muted);margin-top:10px">
-    <strong>Delivery Time:</strong> Instant after payment.<br>
-    <strong>Didn't receive SMS?</strong> Contact support.
+    <strong>Delivery Time:</strong> Instant after payment approval.<br>
+    <strong>Which networks?</strong> MTN MoMo, Telecel Cash, AT Money.<br>
+    <strong>Didn't receive SMS?</strong> Use the Retrieve section above or contact support.
   </div>
 </section>
 
 </div>
 
 <script>
-const BACKEND="https://waecghcardsonline-backend.onrender.com";
-const PAYSTACK_PUBLIC_KEY="pk_live_35ae3de1d58c5051f8a2666fe8ce7a5076d47e65";
+const BACKEND = "https://waecghcardsonline-backend.onrender.com";
 const PRICE_PER_VOUCHER_GHS = 30;
 
-function showMsg(el,text,isError=false){
-  el.textContent=text;
-  el.style.color=isError?'#dc2626':'#16a34a';
+// Per-form state (tracks externalref and OTP step)
+const formState = {
+  WASSCE: { externalref: null, awaitingOtp: false, awaitingPin: false },
+  BECE:   { externalref: null, awaitingOtp: false, awaitingPin: false },
+};
+
+function sfx(type, id) {
+  return document.getElementById(id + (type === 'WASSCE' ? '_w' : '_b'));
 }
 
-function renderVoucherList(container, vouchers){
-  if(!vouchers || vouchers.length === 0){
-    container.style.display = 'none';
-    return;
-  }
+function showMsg(el, text, isError = false) {
+  el.textContent = text;
+  el.style.color = isError ? '#dc2626' : '#16a34a';
+}
+
+function renderVoucherList(container, vouchers) {
+  if (!vouchers || vouchers.length === 0) { container.style.display = 'none'; return; }
   container.innerHTML = '';
   vouchers.forEach(v => {
     const d = document.createElement('div');
     d.className = 'voucher-item';
-    d.textContent = `${v.type || ''} — ${v.serial} | ${v.pin} ${v.date?(' — '+new Date(v.date).toLocaleString()):''}`;
+    d.textContent = `${v.type || ''} — ${v.serial} | ${v.pin}${v.date ? (' — ' + new Date(v.date).toLocaleString()) : ''}`;
     container.appendChild(d);
   });
   container.style.display = 'block';
 }
 
-// update displayed price when qty changes
-function updatePriceIndicators(){
-  const qtyW = Number(document.getElementById('qty_w').value || 1);
-  const qtyB = Number(document.getElementById('qty_b').value || 1);
-  document.getElementById('price_w').textContent = PRICE_PER_VOUCHER_GHS * qtyW;
-  document.getElementById('price_b').textContent = PRICE_PER_VOUCHER_GHS * qtyB;
+function updatePriceIndicators() {
+  document.getElementById('price_w').textContent = PRICE_PER_VOUCHER_GHS * Number(document.getElementById('qty_w').value || 1);
+  document.getElementById('price_b').textContent = PRICE_PER_VOUCHER_GHS * Number(document.getElementById('qty_b').value || 1);
 }
 document.getElementById('qty_w').addEventListener('change', updatePriceIndicators);
 document.getElementById('qty_b').addEventListener('change', updatePriceIndicators);
 updatePriceIndicators();
 
-function startPayment(e,type){
-  e.preventDefault();
+// Poll /verify-payment until vouchers arrive or timeout
+function pollForVouchers(type, externalref, msg, vouchersContainer) {
+  const MAX_POLLS = 20;   // ~60 seconds
+  const INTERVAL  = 3000; // every 3 s
+  let polls = 0;
 
-  const nameEl = document.getElementById(type==='WASSCE'?'name_w':'name_b');
-  const phoneEl = document.getElementById(type==='WASSCE'?'phone_w':'phone_b');
-  const qtyEl = document.getElementById(type==='WASSCE'?'qty_w':'qty_b');
-  const msg = document.getElementById(type==='WASSCE'?'msg_w':'msg_b');
-  const vouchersContainer = document.getElementById(type==='WASSCE'?'vouchers_w':'vouchers_b');
+  showMsg(msg, '⏳ Waiting for payment approval — please check your phone…');
 
-  const name = nameEl.value.trim();
-  const phone = phoneEl.value.trim();
-  const quantity = Number(qtyEl.value || 1);
-
-  if(!name || !phone){
-    showMsg(msg,"Please enter name and phone",true);
-    return;
-  }
-
-  // construct a pseudo-email for Paystack (if you don't collect real emails)
-  const email = (phone.includes('@') || phone.includes('.')) ? phone : `${phone}@autovoucher.com`;
-
-  const amount = PRICE_PER_VOUCHER_GHS * quantity * 100; // in pesewas
-
-  const handler = PaystackPop.setup({
-    key: PAYSTACK_PUBLIC_KEY,
-    email,
-    amount,
-    currency:"GHS",
-    metadata:{
-      voucher_type: type,
-      phone,
-      name,
-      quantity
-    },
-    callback:function(response){
-      showMsg(msg,"Verifying payment...");
-      vouchersContainer.style.display = 'none';
-      fetch(`${BACKEND}/verify-payment`,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({ reference:response.reference })
-      })
-      .then(r=>r.json())
-      .then(data=>{
-        if(data && data.success && Array.isArray(data.vouchers) && data.vouchers.length>0){
-          // show list of vouchers to the user inline
-          renderVoucherList(vouchersContainer, data.vouchers);
-          showMsg(msg, `Payment verified — ${data.vouchers.length} voucher(s) delivered.`);
-        } else if (data && data.success && !data.vouchers){
-          showMsg(msg, "Payment verified. No voucher delivered yet. Try again in a few seconds.");
-        } else {
-          showMsg(msg, data.message || "Delivery pending… Please wait 20 seconds.", true);
-        }
-      })
-      .catch((err)=> {
-        console.error(err);
-        showMsg(msg,"Server error verifying payment",true);
+  const timer = setInterval(async () => {
+    polls++;
+    try {
+      const r = await fetch(`${BACKEND}/verify-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reference: externalref }),
       });
-    },
+      const data = await r.json();
 
-    onClose:function(){
-      showMsg(msg,"Payment cancelled",true);
+      if (data.success && Array.isArray(data.vouchers) && data.vouchers.length > 0) {
+        clearInterval(timer);
+        renderVoucherList(vouchersContainer, data.vouchers);
+        showMsg(msg, `✅ Payment approved — ${data.vouchers.length} voucher(s) delivered!`);
+        // Reset form state
+        formState[type].externalref = null;
+        formState[type].awaitingPin = false;
+        sfx(type, 'paybtn').disabled = false;
+        sfx(type, 'paybtn').textContent = `Pay GHS ${PRICE_PER_VOUCHER_GHS * Number(sfx(type, 'qty').value)}`;
+        return;
+      }
+
+      // txstatus 2 = failed
+      if (!data.success && data.error && data.error.includes('failed')) {
+        clearInterval(timer);
+        showMsg(msg, '❌ Payment failed or was rejected. Please try again.', true);
+        sfx(type, 'paybtn').disabled = false;
+        formState[type].awaitingPin = false;
+        return;
+      }
+    } catch (err) {
+      console.error('Poll error', err);
     }
-  });
 
-  handler.openIframe();
+    if (polls >= MAX_POLLS) {
+      clearInterval(timer);
+      showMsg(msg, '⚠️ Payment timed out. If deducted, use Retrieve below or contact support.', true);
+      sfx(type, 'paybtn').disabled = false;
+      formState[type].awaitingPin = false;
+    }
+  }, INTERVAL);
 }
 
-async function retrieveVouchers(){
-  const input = document.getElementById('retrieve_input').value.trim();
-  const msg = document.getElementById('retrieve_msg');
-  const list = document.getElementById('retrieve_list');
+async function startPayment(e, type) {
+  e.preventDefault();
 
-  if(!input){
-    showMsg(msg, "Please enter phone or email", true);
+  const nameEl    = sfx(type, 'name');
+  const phoneEl   = sfx(type, 'phone');
+  const networkEl = sfx(type, 'network');
+  const qtyEl     = sfx(type, 'qty');
+  const otpEl     = sfx(type, 'otp');
+  const otpRow    = sfx(type, 'otp_row');
+  const msg       = sfx(type, 'msg');
+  const vouchersContainer = sfx(type, 'vouchers');
+  const payBtn    = sfx(type, 'paybtn');
+
+  const name     = nameEl.value.trim();
+  const phone    = phoneEl.value.trim();
+  const network  = networkEl.value;
+  const quantity = Number(qtyEl.value || 1);
+  const otpcode  = otpEl.value.trim();
+  const state    = formState[type];
+
+  if (!name || !phone) {
+    showMsg(msg, 'Please enter name and phone', true);
     return;
   }
-  showMsg(msg, "Searching...");
+
+  payBtn.disabled = true;
+  showMsg(msg, 'Processing…');
+  vouchersContainer.style.display = 'none';
+
+  try {
+    const body = { phone, name, type, quantity, network };
+
+    // If we have an OTP collected from a previous step, include it
+    if (state.awaitingOtp && otpcode) {
+      body.otpcode  = otpcode;
+      body.externalref_hint = state.externalref; // informational only
+    }
+
+    const r = await fetch(`${BACKEND}/initiate-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    console.log('initiate-payment response', data);
+
+    // ── OTP REQUIRED ──────────────────────────────
+    if (data.status === 'otp_required') {
+      state.awaitingOtp  = true;
+      state.externalref  = data.externalref || state.externalref;
+      otpRow.classList.add('visible');
+      showMsg(msg, '📲 An OTP has been sent to your phone. Enter it above and click Pay again.');
+      payBtn.disabled = false;
+      return;
+    }
+
+    // ── OTP VERIFIED — re-submit without OTP to trigger USSD prompt ──
+    if (data.status === 'otp_verified') {
+      state.awaitingOtp = false;
+      otpRow.classList.remove('visible');
+      otpEl.value = '';
+      showMsg(msg, '✅ OTP verified. Sending payment prompt to your phone…');
+
+      // Re-submit without OTP
+      const r2 = await fetch(`${BACKEND}/initiate-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, name, type, quantity, network }),
+      });
+      const data2 = await r2.json();
+
+      if (data2.status === 'pending') {
+        state.awaitingPin = true;
+        state.externalref = data2.externalref;
+        pollForVouchers(type, data2.externalref, msg, vouchersContainer);
+        return;
+      }
+
+      showMsg(msg, data2.message || 'Something went wrong. Please try again.', true);
+      payBtn.disabled = false;
+      return;
+    }
+
+    // ── PAYMENT PROMPT SENT ────────────────────────
+    if (data.status === 'pending') {
+      state.awaitingOtp = false;
+      state.awaitingPin = true;
+      state.externalref = data.externalref;
+      otpRow.classList.remove('visible');
+      otpEl.value = '';
+      pollForVouchers(type, data.externalref, msg, vouchersContainer);
+      return;
+    }
+
+    // ── FAILURE ────────────────────────────────────
+    showMsg(msg, data.message || data.error || 'Payment failed. Please try again.', true);
+    payBtn.disabled = false;
+
+  } catch (err) {
+    console.error('startPayment error', err);
+    showMsg(msg, 'Network error. Please try again.', true);
+    payBtn.disabled = false;
+  }
+}
+
+async function retrieveVouchers() {
+  const input = document.getElementById('retrieve_input').value.trim();
+  const msg   = document.getElementById('retrieve_msg');
+  const list  = document.getElementById('retrieve_list');
+
+  if (!input) { showMsg(msg, 'Please enter your phone number', true); return; }
+
+  showMsg(msg, 'Searching…');
   list.style.display = 'none';
   list.innerHTML = '';
 
-  // decide whether input looks like phone or email
-  let url = `${BACKEND}/retrieve-vouchers?`;
-  if(input.includes('@')) url += `email=${encodeURIComponent(input)}`;
-  else url += `phone=${encodeURIComponent(input)}`;
-
   try {
-    const res = await fetch(url);
+    const url = `${BACKEND}/retrieve-vouchers?phone=${encodeURIComponent(input)}`;
+    const res  = await fetch(url);
     const data = await res.json();
-    if(data && data.success && Array.isArray(data.vouchers) && data.vouchers.length > 0){
+
+    if (data && data.success && Array.isArray(data.vouchers) && data.vouchers.length > 0) {
       renderVoucherList(list, data.vouchers);
       showMsg(msg, `Found ${data.vouchers.length} voucher(s).`);
     } else {
-      showMsg(msg, "No vouchers found for that phone/email.", true);
+      showMsg(msg, 'No vouchers found for that phone number.', true);
     }
-  } catch (err){
+  } catch (err) {
     console.error(err);
-    showMsg(msg, "Server error retrieving vouchers", true);
+    showMsg(msg, 'Server error retrieving vouchers', true);
   }
 }
 </script>
