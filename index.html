@@ -425,13 +425,13 @@ async function startPayment(e, type) {
       const r2 = await fetch(`${BACKEND}/initiate-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, name, type, quantity, network }),
+        body: JSON.stringify({ phone, name, type, quantity, network, externalref_hint: state.externalref }),
       });
       const data2 = await r2.json();
 
       if (data2.status === 'pending') {
         state.awaitingPin = true;
-        state.externalref = data2.externalref;
+        state.externalref = data2.externalref || state.externalref;
         pollForVouchers(type, data2.externalref, msg, vouchersContainer);
         return;
       }
